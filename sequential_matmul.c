@@ -4,7 +4,7 @@ double ** sequential_matmul(double ** A, double ** B, int dim) {
     double **C = allocate_matrix(dim);
     
     // *********************************
-    // Sequential matrix multiplication
+    // Sequential Matrix Multiplication
     // *********************************
     
     for(i = 0; i < dim; i++) {

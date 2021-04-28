@@ -74,21 +74,8 @@ int main(int argc, char *argv[]) {
     
     printf("Allocating memory \n");
     
-    double * ptrA, * ptrB;
-    ptrA = (double*) malloc(sizeof(double) * dim * dim);
-    ptrB = (double*) malloc(sizeof(double) * dim * dim);
-    A = (double**) malloc(sizeof(double *) * dim);
-    B = (double**) malloc(sizeof(double *) * dim);
-    
-    for(i = 0; i < dim; i++) {
-        A[i] = ptrA + i * dim;
-        B[i] = ptrB + i * dim;
-    }
-
-    if (A == NULL || B == NULL) {
-       printf("Unable to allocate memory, exiting \n");
-       exit(0);
-    }
+    A = allocate_matrix(dim);
+    B = allocate_matrix(dim);
     
     srand(time(NULL));
     
@@ -136,10 +123,8 @@ int main(int argc, char *argv[]) {
     if (strassen) {
         // check if dimension is a power of 2
         if ((dim & (dim - 1)) != 0) {
-            printf("%d is not a power of 2 \n", dim);
             new_dim = 1;
             while(new_dim < dim) new_dim *= 2;
-            printf("%d is \n", new_dim);
             
             A_new = allocate_matrix(new_dim);
             B_new = allocate_matrix(new_dim);
@@ -180,9 +165,6 @@ int main(int argc, char *argv[]) {
         printf("Done computing \n");
         printf("Matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
     }
-    
-    
-   
     
     free(A);
     free(B);

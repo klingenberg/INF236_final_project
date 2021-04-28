@@ -16,7 +16,10 @@ double ** sequential_strassen(double **A, double **B, int n){
     
     double **C, **A11, **A21, **A12, **A22, **B11, **B21, **B12, **B22, **C11, **C21, **C12, **C22, **P1, **P2, **P3, **P4, **P5, **P6, **P7, **A11pA22, **B11pB22, **A21pA22, **B12mB22, **B21mB11, **A11mA12, **A21mA11, **B11pB12, **A12pA22, **B21pB22, **P1pP4, **P1pP4pP7, **P1pP3, **P1pP3pP6;
     
-    // handling the base case
+    // *********************************
+    // Sequential Strassen Algorithm
+    // *********************************
+    
     if (n == 1) {
         C = allocate_matrix(1);
         C[0][0] = A[0][0] * B[0][0];
