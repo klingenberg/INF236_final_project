@@ -178,4 +178,5 @@ int main(int argc, char *argv[]) {
         free(A_new);
         free(B_new);
     }
+    
 }
