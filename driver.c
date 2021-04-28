@@ -74,13 +74,26 @@ int main(int argc, char *argv[]) {
     
     printf("Allocating memory \n");
     
-    A = allocate_matrix(dim);
-    B = allocate_matrix(dim);
+    double * ptrA, * ptrB;
+    ptrA = (double*) malloc(sizeof(double) * dim * dim);
+    ptrB = (double*) malloc(sizeof(double) * dim * dim);
+    A = (double**) malloc(sizeof(double *) * dim);
+    B = (double**) malloc(sizeof(double *) * dim);
+    
+    for(i = 0; i < dim; i++) {
+        A[i] = ptrA + i * dim;
+        B[i] = ptrB + i * dim;
+    }
+
+    if (A == NULL || B == NULL) {
+       printf("Unable to allocate memory, exiting \n");
+       exit(0);
+    }
     
     srand(time(NULL));
     
     for(i = 0; i < dim; i++) {
-        for(j = 0;j < dim; j++) {
+        for(j = 0; j < dim; j++) {
             A[i][j] = (double) rand() / (double) RAND_MAX;
             B[i][j] = (double) rand() / (double) RAND_MAX;;
         }
@@ -123,8 +136,10 @@ int main(int argc, char *argv[]) {
     if (strassen) {
         // check if dimension is a power of 2
         if ((dim & (dim - 1)) != 0) {
+            printf("%d is not a power of 2 \n", dim);
             new_dim = 1;
             while(new_dim < dim) new_dim *= 2;
+            printf("%d is \n", new_dim);
             
             A_new = allocate_matrix(new_dim);
             B_new = allocate_matrix(new_dim);
@@ -140,7 +155,11 @@ int main(int argc, char *argv[]) {
         for(run = 0; run < n_runs; run++) {
             mt1 = omp_get_wtime();
             
-            C = sequential_strassen(A_new, B_new, new_dim);
+            if (new_dim != dim) {
+                C = sequential_strassen(A_new, B_new, new_dim);
+            } else {
+                C = sequential_strassen(A, B, new_dim);
+            }
             
             verify_matmul(C, C_seq, dim);
             
@@ -162,16 +181,19 @@ int main(int argc, char *argv[]) {
         printf("Matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
     }
     
-//    deallocate_matrix(A, dim);
-//    deallocate_matrix(B, dim);
-//    deallocate_matrix(C_seq, dim);
+    
+   
+    
+    free(A);
+    free(B);
+    free(C_seq);
 
-//    if (strassen) {
-//        deallocate_matrix(C, new_dim);
-//    }
-//
-//    if (new_dim != dim) {
-//        deallocate_matrix(A_new, new_dim);
-//        deallocate_matrix(B_new, new_dim);
-//    }
+    if (strassen) {
+        free(C);
+    }
+
+    if (new_dim != dim) {
+        free(A_new);
+        free(B_new);
+    }
 }

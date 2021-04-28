@@ -88,6 +88,40 @@ double ** sequential_strassen(double **A, double **B, int n){
             C[k + i][k + j] = C22[i][j];
         }
     }
+    
+    free(A11);
+    free(A21);
+    free(A12);
+    free(A22);
+    free(B11);
+    free(B21);
+    free(B12);
+    free(B22);
+    free(A11pA22);
+    free(B11pB22);
+    free(A21pA22);
+    free(B12mB22);
+    free(B21mB11);
+    free(A11mA12);
+    free(A21mA11);
+    free(B11pB12);
+    free(A12pA22);
+    free(B21pB22);
+    free(C11);
+    free(C21);
+    free(C12);
+    free(C22);
+    free(P1);
+    free(P2);
+    free(P3);
+    free(P4);
+    free(P5);
+    free(P6);
+    free(P7);
+    free(P1pP4);
+    free(P1pP3);
+    free(P1pP4pP7);
+    free(P1pP3pP6);
 
     return C;
 }
