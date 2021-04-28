@@ -11,4 +11,3 @@
 #define n_runs 10
 
 double ** allocate_matrix(int dim);
-void deallocate_matrix(double ** A, int dim);
