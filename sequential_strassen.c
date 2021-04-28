@@ -1,19 +1,3 @@
-double ** allocate_matrix(int dim) {
-    double **C;
-    double * ptr;
-    C = malloc(sizeof(double *) * dim);
-    ptr = malloc(sizeof(double) * dim * dim);
-    
-    int i;
-    for(i = 0; i < dim; i++) C[i] = ptr + (i * dim);
-    
-    if (C == NULL) {
-        printf("Unable to allocate memory, exiting \n");
-        exit(0);
-    }
-    return C;
-}
-
 double ** sub(double **A, double **B, int n) {
     double ** C = allocate_matrix(n);
     int i, j;
@@ -29,16 +13,18 @@ double ** add(double **A, double **B, int n) {
 }
 
 double ** sequential_strassen(double **A, double **B, int n){
+    
+    double **C, **A11, **A21, **A12, **A22, **B11, **B21, **B12, **B22, **C11, **C21, **C12, **C22, **P1, **P2, **P3, **P4, **P5, **P6, **P7, **A11pA22, **B11pB22, **A21pA22, **B12mB22, **B21mB11, **A11mA12, **A21mA11, **B11pB12, **A12pA22, **B21pB22, **P1pP4, **P1pP4pP7, **P1pP3, **P1pP3pP6;
+    
     // handling the base case
     if (n == 1) {
-        double **C = allocate_matrix(1);
+        C = allocate_matrix(1);
         C[0][0] = A[0][0] * B[0][0];
+        
         return C;
     }
     int k = n / 2;
-    
-    double **A11, **A21, **A12, **A22, **B11, **B21, **B12, **B22, **C11, **C21, **C12, **C22, **P1, **P2, **P3, **P4, **P5, **P6, **P7;
-    
+
     A11 = allocate_matrix(k);
     A21 = allocate_matrix(k);
     A12 = allocate_matrix(k);
@@ -63,21 +49,36 @@ double ** sequential_strassen(double **A, double **B, int n){
         }
     }
     
-    P1 = sequential_strassen(add(A11, A22, k), add(B11, B22, k), k);
-    P2 = sequential_strassen(add(A21, A22, k), B11, k);
-    P3 = sequential_strassen(A11, sub(B12, B22, k), k);
-    P4 = sequential_strassen(A22, sub(B21, B11, k), k);
-    P5 = sequential_strassen(add(A11, A12, k), B22, k);
-    P6 = sequential_strassen(sub(A21, A11, k), add(B11, B12, k), k);
-    P7 = sequential_strassen(sub(A12, A22, k), add(B21, B22, k), k);
+    A11pA22 = add(A11, A22, k);
+    B11pB22 = add(B11, B22, k);
+    A21pA22 = add(A21, A22, k);
+    B12mB22 = sub(B12, B22, k);
+    B21mB11 = sub(B21, B11, k);
+    A11mA12 = add(A11, A12, k);
+    A21mA11 = sub(A21, A11, k);
+    B11pB12 = add(B11, B12, k);
+    A12pA22 = sub(A12, A22, k);
+    B21pB22 = add(B21, B22, k);
     
+    P1 = sequential_strassen(A11pA22, B11pB22, k);
+    P2 = sequential_strassen(A21pA22, B11, k);
+    P3 = sequential_strassen(A11, B12mB22, k);
+    P4 = sequential_strassen(A22, B21mB11, k);
+    P5 = sequential_strassen(A11mA12, B22, k);
+    P6 = sequential_strassen(A21mA11, B11pB12, k);
+    P7 = sequential_strassen(A12pA22, B21pB22, k);
     
-    C11 = sub(add(add(P1, P4, k), P7, k), P5, k);
+    P1pP4 = add(P1, P4, k);
+    P1pP4pP7 = add(P1pP4, P7, k);
+    P1pP3 = add(P1, P3, k);
+    P1pP3pP6 = add(P1pP3, P6, k);
+    
+    C11 = sub(P1pP4pP7, P5, k);
     C21 = add(P2, P4, k);
     C12 = add(P3, P5, k);
-    C22 = sub(add(add(P1, P3, k), P6, k), P2, k);
+    C22 = sub(P1pP3pP6, P2, k);
     
-    double ** C = allocate_matrix(n);
+    C = allocate_matrix(n);
 
     for(i = 0; i < k; i++) {
         for(j = 0; j < k; j++) {
@@ -87,26 +88,6 @@ double ** sequential_strassen(double **A, double **B, int n){
             C[k + i][k + j] = C22[i][j];
         }
     }
-    
-    free(A11);
-    free(A21);
-    free(A12);
-    free(A22);
-    free(B11);
-    free(B21);
-    free(B12);
-    free(B22);
-    free(C11);
-    free(C21);
-    free(C12);
-    free(C22);
-    free(P1);
-    free(P2);
-    free(P3);
-    free(P4);
-    free(P5);
-    free(P6);
-    free(P7);
-    
+
     return C;
 }

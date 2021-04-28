@@ -2,7 +2,6 @@
 #include "cFiles.h"
 
 void printmatrix(double ** A, int n) {
-    
     int i, j;
     for(i = 0; i < n; i++) {
         if (i == 0) printf("\t[");
@@ -18,6 +17,22 @@ void printmatrix(double ** A, int n) {
         if (i == n - 1) printf("]");
         printf("\n");
     }
+}
+
+double ** allocate_matrix(int dim) {
+    double **C;
+    double * ptr;
+    ptr = (double*) malloc(sizeof(double) * dim * dim);
+    C = (double**) malloc(sizeof(double *) * dim);
+    
+    int i;
+    for(i = 0; i < dim; i++) C[i] = ptr + i * dim;
+    
+    if (C == NULL) {
+        printf("Unable to allocate memory, exiting \n");
+        exit(0);
+    }
+    return C;
 }
 
 int verify_matmul(double ** X, double **T, int dim) {
@@ -44,7 +59,7 @@ int main(int argc, char *argv[]) {
     int matmul_parallel = false;    /* Parallel Matrix Multiplication */
     int strassen_parallel = false;  /* Parallel Strassen Algorithm */
     
-    double **A, **B, **C_seq, **C;
+    double **A, **B, **C_seq, **C, **A_new, **B_new;
     int i, j, run;
     
     int dim;  // dimension of matrix
@@ -54,6 +69,8 @@ int main(int argc, char *argv[]) {
     
     printf("Give matrix dimension \n");
     scanf("%d", &dim);
+    
+    t_bs = -1;
     
     printf("Allocating memory \n");
     
@@ -86,26 +103,31 @@ int main(int argc, char *argv[]) {
             
             //*** Capture best run
             
-            if ((t_bs < 0) || (mt2-mt1 < t_bs))
-                t_bs = mt2-mt1;
+            if ((t_bs < 0) || (mt2 - mt1 < t_bs))
+                t_bs = mt2 - mt1;
         }
+        
+        if (dim <= 10) {
+            printf("Sequential: \n");
+            printf("C = ");
+            printmatrix(C_seq, dim);
+        }
+        
+        printf("Done computing \n");
+        printf("Matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
     }
     
-    if (dim <= 10) {
-        printf("Sequential: \n");
-        printf("C = ");
-        printmatrix(C_seq, dim);
-    }
+    t_bs = -1;
     
+    int new_dim = dim;
     if (strassen) {
-        int new_dim = dim;
         // check if dimension is a power of 2
         if ((dim & (dim - 1)) != 0) {
             new_dim = 1;
             while(new_dim < dim) new_dim *= 2;
             
-            double ** A_new = allocate_matrix(new_dim);
-            double ** B_new = allocate_matrix(new_dim);
+            A_new = allocate_matrix(new_dim);
+            B_new = allocate_matrix(new_dim);
             
             for (i = 0; i < dim; i++) {
                 for (j = 0; j < dim; j++) {
@@ -113,17 +135,12 @@ int main(int argc, char *argv[]) {
                     B_new[i][j] = B[i][j];
                 }
             }
-            
-            free(A);
-            free(B);
-            A = A_new;
-            B = B_new;
         }
         
         for(run = 0; run < n_runs; run++) {
             mt1 = omp_get_wtime();
             
-            C = sequential_strassen(A, B, new_dim);
+            C = sequential_strassen(A_new, B_new, new_dim);
             
             verify_matmul(C, C_seq, dim);
             
@@ -131,22 +148,30 @@ int main(int argc, char *argv[]) {
             
             //*** Capture best run
             
-            if ((t_bs < 0) || (mt2-mt1 < t_bs))
-                t_bs = mt2-mt1;
+            if ((t_bs < 0) || (mt2 - mt1 < t_bs))
+                t_bs = mt2 - mt1;
         }
+        
+        if (dim <= 10) {
+            printf("Strassen: \n");
+            printf("C = ");
+            printmatrix(C, dim);
+        }
+        
+        printf("Done computing \n");
+        printf("Matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
     }
     
-    if (dim <= 10) {
-        printf("Strassen: \n");
-        printf("C = ");
-        printmatrix(C, dim);
-    }
-    
-    printf("Done computing \n");
-    printf("Matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
-   
-    free(A);
-    free(B);
-    free(C_seq);
-    free(C);
+//    deallocate_matrix(A, dim);
+//    deallocate_matrix(B, dim);
+//    deallocate_matrix(C_seq, dim);
+
+//    if (strassen) {
+//        deallocate_matrix(C, new_dim);
+//    }
+//
+//    if (new_dim != dim) {
+//        deallocate_matrix(A_new, new_dim);
+//        deallocate_matrix(B_new, new_dim);
+//    }
 }

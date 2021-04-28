@@ -1,19 +1,7 @@
 double ** sequential_matmul(double ** A, double ** B, int dim) {
     
     int i, j, k;
-    double **C;
-    double * ptr;
-    C = malloc(sizeof(double *) * dim);
-    ptr = malloc(sizeof(double) * dim * dim);
-    
-    for(i = 0; i < dim; i++) {
-        C[i] = ptr + (i*dim);
-    }
-    
-    if (C == NULL) {
-        printf("Unable to allocate memory, exiting \n");
-        exit(0);
-    }
+    double **C = allocate_matrix(dim);
     
     // *********************************
     // Sequential matrix multiplication
