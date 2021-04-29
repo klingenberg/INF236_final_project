@@ -8,6 +8,15 @@ double add(double **C, double **A, double **B, int n) {
     for(i = 0; i < n; i++) for(j = 0; j < n; j++) C[i][j] = A[i][j] + B[i][j];
 }
 
+double ** allocate_submatrix_pointers(int i, int j, int n, double** M) {
+    double** S;
+    S = (double**) malloc(sizeof(double *) * n);
+
+    int k;
+    for(k = 0; k < n; k++) S[k] = M[k+i*n] + j * n;
+    return S;
+}
+
 int sequential_strassen(double **C, double **A, double **B, int n){
 
     double **A11, **A21, **A12, **A22;
@@ -28,35 +37,19 @@ int sequential_strassen(double **C, double **A, double **B, int n){
 
     int k = n / 2;
 
-    A11 = allocate_matrix(k);
-    A21 = allocate_matrix(k);
-    A12 = allocate_matrix(k);
-    A22 = allocate_matrix(k);
-    B11 = allocate_matrix(k);
-    B21 = allocate_matrix(k);
-    B12 = allocate_matrix(k);
-    B22 = allocate_matrix(k);
-    
-    int i, j;
-    
-    for (i = 0; i < k; i++) {
-        for (j = 0; j < k; j++) {
-            A11[i][j] = A[i][j];
-            B11[i][j] = B[i][j];
-            A21[i][j] = A[k + i][j];
-            B21[i][j] = B[k + i][j];
-            A12[i][j] = A[i][k + j];
-            B12[i][j] = B[i][k + j];
-            A22[i][j] = A[k + i][k + j];
-            B22[i][j] = B[k + i][k + j];
-        }
-    }
+    A11 = allocate_submatrix_pointers(0, 0, k, A);
+    A21 = allocate_submatrix_pointers(1, 0, k, A);
+    A12 = allocate_submatrix_pointers(0, 1, k, A);
+    A22 = allocate_submatrix_pointers(1, 1, k, A);
 
-    // http://ftp.demec.ufpr.br/CFD/bibliografia/Higham_2002_Accuracy%20and%20Stability%20of%20Numerical%20Algorithms.pdf
-    // page 436 (465 in pdf)
+    B11 = allocate_submatrix_pointers(0, 0, k, B);
+    B21 = allocate_submatrix_pointers(1, 0, k, B);
+    B12 = allocate_submatrix_pointers(0, 1, k, B);
+    B22 = allocate_submatrix_pointers(1, 1, k, B);
+
+    // https://arxiv.org/pdf/0707.2347.pdf
     // Winograd's form of Strassen algorithm, only 15 additions, not 18
-
-    // reduce number of temporaries https://arxiv.org/pdf/0707.2347.pdf
+    // reduce number of temporary matrices to 6
 
     N1 = allocate_matrix(k);
     N2 = allocate_matrix(k);
@@ -118,6 +111,8 @@ int sequential_strassen(double **C, double **A, double **B, int n){
     sequential_strassen(N3, A12, B21, k);
     // U1 = P1 + P2
     add(N3, N1, N3, k); // final C11
+
+    int i,j;
 
     for(i = 0; i < k; i++) {
         for(j = 0; j < k; j++) {
