@@ -14,7 +14,15 @@ double ** add(double **A, double **B, int n) {
 
 double ** sequential_strassen(double **A, double **B, int n){
     
-    double **C, **A11, **A21, **A12, **A22, **B11, **B21, **B12, **B22, **C11, **C21, **C12, **C22, **P1, **P2, **P3, **P4, **P5, **P6, **P7, **A11pA22, **B11pB22, **A21pA22, **B12mB22, **B21mB11, **A11mA12, **A21mA11, **B11pB12, **A12pA22, **B21pB22, **P1pP4, **P1pP4pP7, **P1pP3, **P1pP3pP6;
+    double **C;
+    double **A11, **A21, **A12, **A22;
+    double **B11, **B21, **B12, **B22;
+    double **C11, **C21, **C12, **C22;
+
+    // help variables
+    double **P1, **P2, **P3, **P4, **P5, **P6, **P7;
+    double **S1, **S2, **S3, **S4, **S5, **S6, **S7, **S8;
+    double **T1, **T2, **T3;
     
     // *********************************
     // Sequential Strassen Algorithm
@@ -51,35 +59,36 @@ double ** sequential_strassen(double **A, double **B, int n){
             B22[i][j] = B[k + i][k + j];
         }
     }
+
+    // http://ftp.demec.ufpr.br/CFD/bibliografia/Higham_2002_Accuracy%20and%20Stability%20of%20Numerical%20Algorithms.pdf
+    // page 436 (465 in pdf)
+    // Winograd's form of Strassen algorithm, only 15 additions, not 18
     
-    A11pA22 = add(A11, A22, k);
-    B11pB22 = add(B11, B22, k);
-    A21pA22 = add(A21, A22, k);
-    B12mB22 = sub(B12, B22, k);
-    B21mB11 = sub(B21, B11, k);
-    A11mA12 = add(A11, A12, k);
-    A21mA11 = sub(A21, A11, k);
-    B11pB12 = add(B11, B12, k);
-    A12pA22 = sub(A12, A22, k);
-    B21pB22 = add(B21, B22, k);
+    S1 = add(A21, A22, k);
+    S2 = sub(S1, A11, k);
+    S3 = sub(A11, A21, k);
+    S4 = sub(A12, S2, k);
+    S5 = sub(B12, B11, k);
+    S6 = sub(B22, S5, k);
+    S7 = sub(B22, B12, k);
+    S8 = sub(S6, B21, k);
     
-    P1 = sequential_strassen(A11pA22, B11pB22, k);
-    P2 = sequential_strassen(A21pA22, B11, k);
-    P3 = sequential_strassen(A11, B12mB22, k);
-    P4 = sequential_strassen(A22, B21mB11, k);
-    P5 = sequential_strassen(A11mA12, B22, k);
-    P6 = sequential_strassen(A21mA11, B11pB12, k);
-    P7 = sequential_strassen(A12pA22, B21pB22, k);
+    P1 = sequential_strassen(S2, S6, k);
+    P2 = sequential_strassen(A11, B11, k);
+    P3 = sequential_strassen(A12, B21, k);
+    P4 = sequential_strassen(S3, S7, k);
+    P5 = sequential_strassen(S1, S5, k);
+    P6 = sequential_strassen(S4, B22, k);
+    P7 = sequential_strassen(A22, S8, k);
     
-    P1pP4 = add(P1, P4, k);
-    P1pP4pP7 = add(P1pP4, P7, k);
-    P1pP3 = add(P1, P3, k);
-    P1pP3pP6 = add(P1pP3, P6, k);
+    T1 = add(P1, P2, k);
+    T2 = add(T1, P4, k);
+    T3 = add(T1, P5, k);
     
-    C11 = sub(P1pP4pP7, P5, k);
-    C21 = add(P2, P4, k);
-    C12 = add(P3, P5, k);
-    C22 = sub(P1pP3pP6, P2, k);
+    C11 = add(P2, P3, k);
+    C12 = add(T3, P6, k);
+    C21 = sub(T2, P7, k);
+    C22 = add(T2, P5, k);
     
     C = allocate_matrix(n);
 
@@ -100,16 +109,7 @@ double ** sequential_strassen(double **A, double **B, int n){
     free(B21);
     free(B12);
     free(B22);
-    free(A11pA22);
-    free(B11pB22);
-    free(A21pA22);
-    free(B12mB22);
-    free(B21mB11);
-    free(A11mA12);
-    free(A21mA11);
-    free(B11pB12);
-    free(A12pA22);
-    free(B21pB22);
+    
     free(C11);
     free(C21);
     free(C12);
@@ -121,10 +121,17 @@ double ** sequential_strassen(double **A, double **B, int n){
     free(P5);
     free(P6);
     free(P7);
-    free(P1pP4);
-    free(P1pP3);
-    free(P1pP4pP7);
-    free(P1pP3pP6);
+    free(S1);
+    free(S2);
+    free(S3);
+    free(S4);
+    free(S5);
+    free(S6);
+    free(S7);
+    free(S8);
+    free(T1);
+    free(T2);
+    free(T3);
 
     return C;
 }
