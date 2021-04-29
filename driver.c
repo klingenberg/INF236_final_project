@@ -141,14 +141,16 @@ int main(int argc, char *argv[]) {
             mt1 = omp_get_wtime();
             
             if (new_dim != dim) {
-                C = sequential_strassen(A_new, B_new, new_dim);
+                C = allocate_matrix(new_dim);
+                sequential_strassen(C, A_new, B_new, new_dim);
             } else {
-                C = sequential_strassen(A, B, new_dim);
+                C = allocate_matrix(dim);
+                sequential_strassen(C, A, B, new_dim);
             }
             
-            verify_matmul(C, C_seq, dim);
-            
             mt2 = omp_get_wtime();
+
+            verify_matmul(C, C_seq, dim);
             
             //*** Capture best run
             
