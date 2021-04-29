@@ -1,10 +1,10 @@
 # the compiler: gcc for C program, define as g++ for C++
-CC = clang
+CC = gcc
 
 # compiler flags:
 #  -g    adds debugging information to the executable file
 #  -Wall turns on most, but not all, compiler warnings
-CFLAGS  = -Xpreprocessor -fopenmp -lomp -lm -O3
+CFLAGS  = driver.c -fopenmp -lnuma -O3
 
 # the build target executable:
 TARGET = driver
