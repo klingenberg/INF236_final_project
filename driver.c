@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
         }
         
         printf("Done computing \n");
-        printf("Matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
+        printf("Simple matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
     }
     
     t_bs = -1;
@@ -163,7 +163,7 @@ int main(int argc, char *argv[]) {
         }
         
         printf("Done computing \n");
-        printf("Matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
+        printf("Strassen matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
     }
     
     free(A);
@@ -178,5 +178,5 @@ int main(int argc, char *argv[]) {
         free(A_new);
         free(B_new);
     }
-    
+
 }
