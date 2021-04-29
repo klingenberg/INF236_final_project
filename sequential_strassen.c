@@ -17,6 +17,27 @@ double ** allocate_submatrix_pointers(int i, int j, int n, double** M) {
     return S;
 }
 
+double ** matmul(double ** C,double ** A, double ** B, int dim) {
+    
+    int i, j, k;
+    
+    // *********************************
+    // Sequential Matrix Multiplication
+    // *********************************
+    
+    for(i = 0; i < dim; i++) {
+        for(j = 0; j < dim; j++) {
+            C[i][j] = 0.0;
+            for(k = 0; k < dim; k++) {
+                C[i][j] += A[i][k] * B[k][j];
+            } // k
+        } // j
+    } // i
+    
+    return C;
+}
+
+
 int sequential_strassen(double **C, double **A, double **B, int n){
 
     double **A11, **A21, **A12, **A22;
@@ -30,11 +51,22 @@ int sequential_strassen(double **C, double **A, double **B, int n){
     // Sequential Strassen Algorithm
     // *********************************
     
+    // Depth level less than  8:
+    if (n <= 8) {
+        matmul(C, A, B, n);
+        return 0;
+    }
+    
+    
+    /*
+    // Depth level 1:
     if (n == 1) {
         C[0][0] = A[0][0] * B[0][0];
         return 0;
     }
-
+    */
+    
+    
     int k = n / 2;
 
     A11 = allocate_submatrix_pointers(0, 0, k, A);

@@ -67,8 +67,7 @@ int main(int argc, char *argv[]) {
     double mt1, mt2; // Timing variables
     float t_bs;
     
-    printf("Give matrix dimension \n");
-    scanf("%d", &dim);
+    sscanf(argv[1], "%d", &dim);
     
     t_bs = -1;
     
