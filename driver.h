@@ -8,6 +8,6 @@
 #define true  1
 #define false 0
 
-#define n_runs 10
+#define n_runs 1
 
-double ** allocate_matrix(int dim);
+int ** allocate_matrix(int dim);

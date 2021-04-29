@@ -1,29 +1,29 @@
-double sub(double **C, double **A, double **B, int n) {
+void sub(int **C, int **A, int **B, int n) {
     int i, j;
     for(i = 0; i < n; i++) for(j = 0; j < n; j++) C[i][j] = A[i][j] - B[i][j];
 }
 
-double add(double **C, double **A, double **B, int n) {
+void add(int **C, int **A, int **B, int n) {
     int i, j;
     for(i = 0; i < n; i++) for(j = 0; j < n; j++) C[i][j] = A[i][j] + B[i][j];
 }
 
-double ** allocate_submatrix_pointers(int i, int j, int n, double** M) {
-    double** S;
-    S = (double**) malloc(sizeof(double *) * n);
+int ** allocate_submatrix_pointers(int i, int j, int n, int** M) {
+    int** S;
+    S = (int**) malloc(sizeof(int *) * n);
 
     int k;
     for(k = 0; k < n; k++) S[k] = M[k+i*n] + j * n;
     return S;
 }
 
-int sequential_strassen(double **C, double **A, double **B, int n){
+int sequential_strassen(int **C, int **A, int **B, int n){
 
-    double **A11, **A21, **A12, **A22;
-    double **B11, **B21, **B12, **B22;
+    int **A11, **A21, **A12, **A22;
+    int **B11, **B21, **B12, **B22;
 
     // help variables
-    double **N1, **N2, **N3, **N4, **N5, **N6;
+    int **N1, **N2, **N3, **N4, **N5, **N6;
 
     
     // *********************************

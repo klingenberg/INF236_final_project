@@ -1,14 +1,14 @@
 #include "driver.h"	    // Include system files and define variables
 #include "cFiles.h"
 
-void printmatrix(double ** A, int n) {
+void printmatrix(int ** A, int n) {
     int i, j;
     for(i = 0; i < n; i++) {
         if (i == 0) printf("\t[");
         else printf("\t ");
         printf("[");
         for(j = 0; j < n; j++) {
-            printf("%.4f", A[i][j]);
+            printf("%d", A[i][j]);
             if (j < n - 1) {
                 printf(", ");
             }
@@ -19,11 +19,11 @@ void printmatrix(double ** A, int n) {
     }
 }
 
-double ** allocate_matrix(int dim) {
-    double **C;
-    double * ptr;
-    ptr = (double*) malloc(sizeof(double) * dim * dim);
-    C = (double**) malloc(sizeof(double *) * dim);
+int ** allocate_matrix(int dim) {
+    int **C;
+    int * ptr;
+    ptr = (int*) malloc(sizeof(int) * dim * dim);
+    C = (int**) malloc(sizeof(int *) * dim);
     
     int i;
     for(i = 0; i < dim; i++) C[i] = ptr + i * dim;
@@ -35,15 +35,14 @@ double ** allocate_matrix(int dim) {
     return C;
 }
 
-int verify_matmul(double ** X, double **T, int dim) {
+int verify_matmul(int ** X, int **T, int dim) {
 
     int i, j;
-    double eps = 0.000001;
     
     for(i = 0; i < dim; i++) {
         for (j = 0; j < dim; j++) {
-            if (fabs(X[i][j] - T[i][j]) > eps) {
-                printf("Sequential: C[%d][%d] = %f, Parallel: C[%d][%d] = %f \n", i, j, T[i][j], i, j, X[i][j]);
+            if (X[i][j] != T[i][j]) {
+                printf("Sequential: C[%d][%d] = %d, Parallel: C[%d][%d] = %d \n", i, j, T[i][j], i, j, X[i][j]);
                 return false;
             }
         }
@@ -59,7 +58,7 @@ int main(int argc, char *argv[]) {
     int matmul_parallel = false;    /* Parallel Matrix Multiplication */
     int strassen_parallel = false;  /* Parallel Strassen Algorithm */
     
-    double **A, **B, **C_seq, **C, **A_new, **B_new;
+    int **A, **B, **C_seq, **C, **A_new, **B_new;
     int i, j, run;
     
     int dim;  // dimension of matrix
@@ -81,8 +80,8 @@ int main(int argc, char *argv[]) {
     
     for(i = 0; i < dim; i++) {
         for(j = 0; j < dim; j++) {
-            A[i][j] = (double) rand() / (double) RAND_MAX;
-            B[i][j] = (double) rand() / (double) RAND_MAX;;
+            A[i][j] = rand() % 20;
+            B[i][j] = rand() % 20;
         }
     }
     
