@@ -17,6 +17,19 @@ double ** allocate_submatrix_pointers(int i, int j, int n, double** M) {
     return S;
 }
 
+double * reorder_matrix(int dim, double ** X) {
+    double *T;
+    T = (double*) malloc(sizeof(double) * dim);
+    int i,j;
+    for (i = 0; i < dim; i++) for (j = 0; j < dim; j++) T[z_order_lookup(j, i)] = X[i][j];
+    
+    if (T == NULL) {
+        printf("Unable to allocate memory, exiting \n");
+        exit(0);
+    }
+    return T;
+}
+
 double ** matmul(double ** C,double ** A, double ** B, int dim) {
     
     int i, j, k;
@@ -29,7 +42,7 @@ double ** matmul(double ** C,double ** A, double ** B, int dim) {
         for(j = 0; j < dim; j++) {
             C[i][j] = 0.0;
             for(k = 0; k < dim; k++) {
-                C[i][j] += A[i][k] * B[k][j];
+                C[z_order_lookup(j, i)] += A[z_order_lookup(k, i)] * B[z_order_lookup(j, k)];
             } // k
         } // j
     } // i

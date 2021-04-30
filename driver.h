@@ -11,3 +11,5 @@
 #define n_runs 1
 
 double ** allocate_matrix(int dim);
+int z_order_lookup(int x, int y);
+struct indeces z_order_inverse_lookup(int value);
