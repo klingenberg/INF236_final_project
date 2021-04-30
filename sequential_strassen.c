@@ -57,7 +57,6 @@ int sequential_strassen(double **C, double **A, double **B, int n){
         return 0;
     }
     
-    
     /*
     // Depth level 1:
     if (n == 1) {
@@ -65,7 +64,6 @@ int sequential_strassen(double **C, double **A, double **B, int n){
         return 0;
     }
     */
-    
     
     int k = n / 2;
 

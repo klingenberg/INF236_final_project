@@ -1,5 +1,11 @@
 #include "driver.h"	    // Include system files and define variables
 #include "cFiles.h"
+#include "limits.h"
+
+struct indeces {
+    int x;
+    int y;
+};
 
 void printmatrix(double ** A, int n) {
     int i, j;
@@ -33,6 +39,36 @@ double ** allocate_matrix(int dim) {
         exit(0);
     }
     return C;
+}
+
+// Moser–De Bruijn sequence lookup and inverse lookup taken from:
+// https://gist.github.com/JLChnToZ/ec41b1b45987d0e1b40ceabc13920559
+
+int z_order_lookup(int x, int y) {
+    if(x < 0 || y < 0) return 0;
+    int result = 0;
+    int mask;
+    int offset = 0;
+    
+    for(mask = 1; x >= mask || y >= mask; mask <<= 1) {
+        result |= (x & mask) << offset++ | (y & mask) << offset;
+    }
+    
+    return result;
+}
+
+struct indeces z_order_inverse_lookup(int value) {
+    struct indeces idx;
+    idx.x = 0;
+    idx.y = 0;
+    int offset = 0;
+    int mask;
+    
+    for(mask = 1; value == offset + 1 || value >= 1 << offset + 1; mask <<= 1) {
+        idx.x |= (value >> offset++) & mask;
+        idx.y |= (value >> offset) & mask;
+    }
+    return idx;
 }
 
 int verify_matmul(double ** X, double **T, int dim) {
