@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
     for(i = 0; i < dim; i++) {
         for(j = 0; j < dim; j++) {
             A[i][j] = (double) rand() / (double) RAND_MAX;
-            B[i][j] = (double) rand() / (double) RAND_MAX;;
+            B[i][j] = (double) rand() / (double) RAND_MAX;
         }
     }
     
@@ -176,11 +176,9 @@ int main(int argc, char *argv[]) {
             mt1 = omp_get_wtime();
             
             if (new_dim != dim) {
-                C = allocate_matrix(new_dim);
-                sequential_strassen(C, A_new, B_new, new_dim);
+                C = sequential_strassen(A_new, B_new, new_dim);
             } else {
-                C = allocate_matrix(dim);
-                sequential_strassen(C, A, B, new_dim);
+                C = sequential_strassen(A, B, new_dim);
             }
             
             mt2 = omp_get_wtime();
