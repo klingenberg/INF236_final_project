@@ -50,6 +50,21 @@ void matmul(double * C,double * A, double * B, int dim) {
     } // i
 }
 
+
+int * mdb_sequence(int n) {
+    int i;
+    int *S;
+    S = (int*) malloc(sizeof(int) * n);
+
+    S[0] = 0;
+
+    for(i = 1; i < n; i++) {
+        S[i] = (S[i-1] + 0xaaaaaaab) & 0x55555555;
+    }
+
+    return S;
+}
+
 int matmul_recursive(double * C,double * A, double * B, int n, double *H) {
 
     double *A11, *A21, *A12, *A22;
@@ -121,7 +136,21 @@ int matmul_recursive(double * C,double * A, double * B, int n, double *H) {
     return 0;
 }
 
-int sequential_strassen_recursion(double *C, double *A, double *B, int n, double *X){
+void matmul_morton(double * C,double * A, double * B, int dim, int *S) {
+    
+    int i, j, k;
+
+    for(i = 0; i < dim; i++) {
+        for(j = 0; j < dim; j++) {
+            C[2*S[i]+S[j]] = 0.0;
+            for(k = 0; k < dim; k++) {
+                C[2*S[i]+S[j]] += A[2*S[i]+S[k]] * B[2*S[k]+S[j]];
+            } // k
+        } // j
+    } // i
+}
+
+int sequential_strassen_recursion(double *C, double *A, double *B, int n, double *X, int depth, int *M){
 
     double *A11, *A21, *A12, *A22;
     double *B11, *B21, *B12, *B22;
@@ -133,8 +162,9 @@ int sequential_strassen_recursion(double *C, double *A, double *B, int n, double
     // *********************************
     
     // Depth level:
-    if (n <= 4) {
-        matmul_recursive(C, A, B, n, X);
+    if (n <= depth) {
+        //matmul_recursive(C, A, B, n, X);
+        matmul_morton(C, A, B, n, M);
         return 0;
     }
     
@@ -170,29 +200,29 @@ int sequential_strassen_recursion(double *C, double *A, double *B, int n, double
     // T3 = B22 - B12
     sub(N2, B22, B12, kk);
     // P7 = S3 * T3
-    sequential_strassen_recursion(N5, N1, N2, k, X_small);
+    sequential_strassen_recursion(N5, N1, N2, k, X_small, depth, M);
     
     // S1 = A21 + A22
     add(N1, A21, A22, kk);
     // T1 = B12 − B11
     sub(N2, B12, B11, kk);
     // P5 = S1 * T1
-    sequential_strassen_recursion(N6, N1, N2, k, X_small);
+    sequential_strassen_recursion(N6, N1, N2, k, X_small, depth, M);
 
     // S2 = S1 − A11
     sub(N1, N1, A11, kk);
     // T2 = B22 − T1
     sub(N2, B22, N2, kk);
     // P6 = S2 * T2
-    sequential_strassen_recursion(N4, N1, N2, k, X_small);
+    sequential_strassen_recursion(N4, N1, N2, k, X_small, depth, M);
     
     // S4 = A12 − S2
     sub(N1, A12, N1, kk);
     // P3 = S4 * B22
-    sequential_strassen_recursion(N3, N1, B22, k, X_small);
+    sequential_strassen_recursion(N3, N1, B22, k, X_small, depth, M);
 
     // P1 = A11 * B11 
-    sequential_strassen_recursion(N1, A11, B11, k, X_small);
+    sequential_strassen_recursion(N1, A11, B11, k, X_small, depth, M);
 
     // U2 = P1 + P6
     add(N4, N1, N4, kk);
@@ -209,13 +239,13 @@ int sequential_strassen_recursion(double *C, double *A, double *B, int n, double
     // T4 = T2 − B21
     sub(N2, N2, B21, kk);
     // P4 = A22 * T4
-    sequential_strassen_recursion(N3, A22, N2, k, X_small);
+    sequential_strassen_recursion(N3, A22, N2, k, X_small, depth, M);
 
     // U6 = U3 − P4
     sub(N5, N5, N3, kk); // final C21
 
     // P2 = A12 * B21
-    sequential_strassen_recursion(N3, A12, B21, k, X_small);
+    sequential_strassen_recursion(N3, A12, B21, k, X_small, depth, M);
     // U1 = P1 + P2
     add(N3, N1, N3, kk); // final C11
 
@@ -235,7 +265,12 @@ double ** sequential_strassen(double **A, double **B, int n){
 
     H = allocate_array(3*(n*n)/4); // size 3/4 of original matrix
 
-    sequential_strassen_recursion(R, rA, rB, n, H);
+    int depth = 4;
+    int * M;
+
+    M = mdb_sequence(depth);
+
+    sequential_strassen_recursion(R, rA, rB, n, H, depth, M);
     
     double **C = allocate_matrix(n);
     
