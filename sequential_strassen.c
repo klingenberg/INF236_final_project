@@ -216,11 +216,25 @@ double ** sequential_strassen(double **A, double **B, int n){
 
     H = allocate_array(3*(n*n)/4); // size 3/4 of original matrix
 
-    sequential_strassen_recursion(R, rA, rB, n, H);
+    double mt1, mt2; // Timing variables
+    mt1 = omp_get_wtime();
 
+    sequential_strassen_recursion(R, rA, rB, n, H);
+    
+    mt2 = omp_get_wtime();
+    
+    printf("Strassen took %fs", mt2 - mt1);
+    
     double **C;
     C = allocate_matrix(n);
+    
+    mt1 = omp_get_wtime();
+
     reorder_to_standard_matrix(C, R, n);
+    
+    mt2 = omp_get_wtime();
+
+    printf("Reordering took %fs", mt2 - mt1);
 
     free(R);
     free(rA);
