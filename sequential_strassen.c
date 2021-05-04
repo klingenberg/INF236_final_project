@@ -57,8 +57,11 @@ int matmul_recursive(double * C,double * A, double * B, int n, double *H) {
     double *C11, *C21, *C12, *C22;
     double *H1, *H2;
 
-    if (n == 1) {
-        C[0] = A[0]*B[0];
+    if (n == 2) {
+        C[0] = A[0]*B[0]+A[1]*B[2];
+        C[1] = A[0]*B[1]+A[1]*B[3];
+        C[2] = A[2]*B[0]+A[3]*B[2];
+        C[3] = A[2]*B[1]+A[3]*B[3];
         return 0;
     }
 
