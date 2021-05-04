@@ -223,7 +223,7 @@ double ** sequential_strassen(double **A, double **B, int n){
     
     mt2 = omp_get_wtime();
     
-    printf("Strassen took %fs", mt2 - mt1);
+    printf("Strassen took %fs\n", mt2 - mt1);
     
     double **C;
     C = allocate_matrix(n);
@@ -234,7 +234,7 @@ double ** sequential_strassen(double **A, double **B, int n){
     
     mt2 = omp_get_wtime();
 
-    printf("Reordering took %fs", mt2 - mt1);
+    printf("Reordering took %fs\n", mt2 - mt1);
 
     free(R);
     free(rA);
