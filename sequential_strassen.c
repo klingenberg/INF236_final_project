@@ -1,13 +1,12 @@
-double * allocate_array(int n) {
-    double *T;
-    T = (double*) malloc(sizeof(double) * n);
+#include "morton_order.c"
 
-    if (T == NULL) {
-        printf("Unable to allocate memory, exiting \n");
-        exit(0);
+void print_array_as_matrix(double *A,int dim) {
+    int j;
+    for (j = 0; j < dim*dim; j++) {
+        if (j % dim == 0) printf("\n");
+        printf("%.0f ", A[j]);
     }
-
-    return T;
+    printf("\n");
 }
 
 void sub(double *C, double *A, double *B, int n) {
@@ -20,6 +19,7 @@ void add(double *C, double *A, double *B, int n) {
     for(i = 0; i < n; i++) C[i] = A[i] + B[i];
 }
 
+/*
 double * reorder_to_z_array(double ** X, int dim) {
     double *T;
     T = allocate_array(dim*dim);
@@ -156,8 +156,26 @@ void matmul_morton(double * C,double * A, double * B, int dim, int *S) {
         } // j
     } // i
 }
+*/
 
-int sequential_strassen_recursion(double *C, double *A, double *B, int n, double *X, int depth, int *M){
+double * matmul(double *C, double * A, double * B, int dim) {
+    int i, j, k;
+    
+    for(i = 0; i < dim; i++) {
+        for(j = 0; j < dim; j++) {
+            C[i*dim+j] = 0.0;
+        } // j
+        for(k = 0; k < dim; k++) {
+            for (j = 0; j < dim; j++) {
+                C[i*dim+j] += A[i*dim+k] * B[k*dim+j];
+            } // j
+        } // k
+    } // i
+
+    return C;
+}
+
+int sequential_strassen_recursion(double *C, double *A, double *B, int n, double *X, int depth){
 
     double *A11, *A21, *A12, *A22;
     double *B11, *B21, *B12, *B22;
@@ -169,10 +187,11 @@ int sequential_strassen_recursion(double *C, double *A, double *B, int n, double
     // *********************************
     
     // Depth level:
-    if (n <= 4) { // depth) {
+    if (n <= depth) { // depth) {
         //matmul_recursive(C, A, B, n, X);
         //matmul_morton(C, A, B, n, M);
-        matmul_hardcoded_4x4(C, A, B, n);
+        //matmul_hardcoded_4x4(C, A, B, n);
+        matmul(C, A, B, n);
         return 0;
     }
     
@@ -205,32 +224,48 @@ int sequential_strassen_recursion(double *C, double *A, double *B, int n, double
 
     // S3 = A11 - A21
     sub(N1, A11, A21, kk);
+    /*
+    printf("S3 = A11 - A21\n");
+    print_array_as_matrix(A11,k);
+    print_array_as_matrix(A21,k);
+    print_array_as_matrix(N1,k);
+    */
     // T3 = B22 - B12
     sub(N2, B22, B12, kk);
+    /*
+    printf("T3 = B22 - B12\n");
+    print_array_as_matrix(B22,k);
+    print_array_as_matrix(B12,k);
+    print_array_as_matrix(N2,k);
+    */
     // P7 = S3 * T3
-    sequential_strassen_recursion(N5, N1, N2, k, X_small, depth, M);
+    sequential_strassen_recursion(N5, N1, N2, k, X_small, depth);
+    /*
+    printf("P7 = S3 * T3\n");
+    print_array_as_matrix(N5,k);
+    */
     
     // S1 = A21 + A22
     add(N1, A21, A22, kk);
     // T1 = B12 − B11
     sub(N2, B12, B11, kk);
     // P5 = S1 * T1
-    sequential_strassen_recursion(N6, N1, N2, k, X_small, depth, M);
+    sequential_strassen_recursion(N6, N1, N2, k, X_small, depth);
 
     // S2 = S1 − A11
     sub(N1, N1, A11, kk);
     // T2 = B22 − T1
     sub(N2, B22, N2, kk);
     // P6 = S2 * T2
-    sequential_strassen_recursion(N4, N1, N2, k, X_small, depth, M);
+    sequential_strassen_recursion(N4, N1, N2, k, X_small, depth);
     
     // S4 = A12 − S2
     sub(N1, A12, N1, kk);
     // P3 = S4 * B22
-    sequential_strassen_recursion(N3, N1, B22, k, X_small, depth, M);
+    sequential_strassen_recursion(N3, N1, B22, k, X_small, depth);
 
     // P1 = A11 * B11 
-    sequential_strassen_recursion(N1, A11, B11, k, X_small, depth, M);
+    sequential_strassen_recursion(N1, A11, B11, k, X_small, depth);
 
     // U2 = P1 + P6
     add(N4, N1, N4, kk);
@@ -247,13 +282,13 @@ int sequential_strassen_recursion(double *C, double *A, double *B, int n, double
     // T4 = T2 − B21
     sub(N2, N2, B21, kk);
     // P4 = A22 * T4
-    sequential_strassen_recursion(N3, A22, N2, k, X_small, depth, M);
+    sequential_strassen_recursion(N3, A22, N2, k, X_small, depth);
 
     // U6 = U3 − P4
     sub(N5, N5, N3, kk); // final C21
 
     // P2 = A12 * B21
-    sequential_strassen_recursion(N3, A12, B21, k, X_small, depth, M);
+    sequential_strassen_recursion(N3, A12, B21, k, X_small, depth);
     // U1 = P1 + P2
     add(N3, N1, N3, kk); // final C11
 
@@ -264,25 +299,26 @@ double ** sequential_strassen(double **A, double **B, int n){
     double *R;
     R = allocate_array(n*n);
 
+    int depth = 32;
+
     double *rA, *rB;
-    rA = reorder_to_z_array(A, n);
-    rB = reorder_to_z_array(B, n);
+    rA = reorder_to_morton_array(A, n, depth);
+    rB = reorder_to_morton_array(B, n, depth);
+
+    //print_array_as_matrix(rA,n);
+    //print_array_as_matrix(rB,n);
 
     // help variables
     double *H;
 
     H = allocate_array(3*(n*n)/4); // size 3/4 of original matrix
 
-    int depth = 2;
-    int * M;
 
-    M = mdb_sequence(depth);
-
-    sequential_strassen_recursion(R, rA, rB, n, H, depth, M);
+    sequential_strassen_recursion(R, rA, rB, n, H, depth);
     
     double **C = allocate_matrix(n);
     
-    reorder_to_standard_matrix(C, R, n);
+    reorder_back_morton_array(C, R, n, depth);
     
     free(R);
     free(rA);
