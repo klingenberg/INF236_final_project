@@ -65,6 +65,31 @@ int * mdb_sequence(int n) {
     return S;
 }
 
+int matmul_hardcoded_4x4(double * C,double * A, double * B, int n) {
+
+    C[0] = A[0] * B[0] + A[1] * B[2] + A[4] * B[8] + A[5] * B[10];
+    C[1] = A[0] * B[1] + A[1] * B[3] + A[4] * B[9] + A[5] * B[11];
+    C[2] = A[2] * B[0] + A[3] * B[2] + A[6] * B[8] + A[7] * B[10];
+    C[3] = A[2] * B[1] + A[3] * B[3] + A[6] * B[9] + A[7] * B[11];
+
+    C[4] = A[0] * B[4] + A[1] * B[6] + A[4] * B[12] + A[5] * B[14];
+    C[5] = A[0] * B[5] + A[1] * B[7] + A[4] * B[13] + A[5] * B[15];
+    C[6] = A[2] * B[4] + A[3] * B[6] + A[6] * B[12] + A[7] * B[14];
+    C[7] = A[2] * B[5] + A[3] * B[7] + A[6] * B[13] + A[7] * B[15];
+    
+    C[8] = A[8] * B[0] + A[9] * B[2] + A[12] * B[8] + A[13] * B[10];
+    C[9] = A[8] * B[1] + A[9] * B[3] + A[12] * B[9] + A[13] * B[11];
+    C[10] = A[10] * B[0] + A[11] * B[2] + A[14] * B[8] + A[15] * B[10];
+    C[11] = A[10] * B[1] + A[11] * B[3] + A[14] * B[9] + A[15] * B[11];
+    
+    C[12] = A[8] * B[4] + A[9] * B[6] + A[12] * B[12] + A[13] * B[14];
+    C[13] = A[8] * B[5] + A[9] * B[7] + A[12] * B[13] + A[13] * B[15];
+    C[14] = A[10] * B[4] + A[11] * B[6] + A[14] * B[12] + A[15] * B[14];
+    C[15] = A[10] * B[5] + A[11] * B[7] + A[14] * B[13] + A[15] * B[15];
+
+    return 0;
+}
+
 int matmul_recursive(double * C,double * A, double * B, int n, double *H) {
 
     double *A11, *A21, *A12, *A22;
@@ -72,26 +97,8 @@ int matmul_recursive(double * C,double * A, double * B, int n, double *H) {
     double *C11, *C21, *C12, *C22;
     double *H1, *H2;
     
-    if (n == 4) {
-        C[0] = A[0] * B[0] + A[1] * B[2] + A[4] * B[8] + A[5] * B[10];
-        C[1] = A[0] * B[1] + A[1] * B[3] + A[4] * B[9] + A[5] * B[11];
-        C[2] = A[2] * B[0] + A[3] * B[2] + A[6] * B[8] + A[7] * B[10];
-        C[3] = A[2] * B[1] + A[3] * B[3] + A[6] * B[9] + A[7] * B[11];
-
-        C[4] = A[0] * B[4] + A[1] * B[6] + A[4] * B[12] + A[5] * B[14];
-        C[5] = A[0] * B[5] + A[1] * B[7] + A[4] * B[13] + A[5] * B[15];
-        C[6] = A[2] * B[4] + A[3] * B[6] + A[6] * B[12] + A[7] * B[14];
-        C[7] = A[2] * B[5] + A[3] * B[7] + A[6] * B[13] + A[7] * B[15];
-        
-        C[8] = A[8] * B[0] + A[9] * B[2] + A[12] * B[8] + A[13] * B[10];
-        C[9] = A[8] * B[1] + A[9] * B[3] + A[12] * B[9] + A[13] * B[11];
-        C[10] = A[10] * B[0] + A[11] * B[2] + A[14] * B[8] + A[15] * B[10];
-        C[11] = A[10] * B[1] + A[11] * B[3] + A[14] * B[9] + A[15] * B[11];
-        
-        C[12] = A[8] * B[4] + A[9] * B[6] + A[12] * B[12] + A[13] * B[14];
-        C[13] = A[8] * B[5] + A[9] * B[7] + A[12] * B[13] + A[13] * B[15];
-        C[14] = A[10] * B[4] + A[11] * B[6] + A[14] * B[12] + A[15] * B[14];
-        C[15] = A[10] * B[5] + A[11] * B[7] + A[14] * B[13] + A[15] * B[15];
+    if (n == 1) {
+        C[0] = A[0] * B[0];
         
         return 0;
     }
@@ -162,9 +169,10 @@ int sequential_strassen_recursion(double *C, double *A, double *B, int n, double
     // *********************************
     
     // Depth level:
-    if (n <= depth) {
+    if (n <= 4) { // depth) {
         //matmul_recursive(C, A, B, n, X);
-        matmul_morton(C, A, B, n, M);
+        //matmul_morton(C, A, B, n, M);
+        matmul_hardcoded_4x4(C, A, B, n);
         return 0;
     }
     
@@ -265,7 +273,7 @@ double ** sequential_strassen(double **A, double **B, int n){
 
     H = allocate_array(3*(n*n)/4); // size 3/4 of original matrix
 
-    int depth = 4;
+    int depth = 2;
     int * M;
 
     M = mdb_sequence(depth);
