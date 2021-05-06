@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
     int matmul = true;              /* Sequential Matrix Multiplication */
     int strassen = true;           /* Sequential Strassen Algorithm */
     int matmul_parallel = true;    /* Parallel Matrix Multiplication */
-    int strassen_parallel = false;  /* Parallel Strassen Algorithm */
+    int strassen_parallel = true;  /* Parallel Strassen Algorithm */
     
     double **A, **B, **C_seq, **C, **A_new, **B_new;
     double *ptrA, *ptrB, *ptrA_new, *ptrB_new;
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
     int dim;  // dimension of matrix
     
     double mt1, mt2; // Timing variables
-    float t_bs;
+    float t_bs, t;
     
     sscanf(argv[1], "%d", &dim);
     
@@ -176,22 +176,22 @@ int main(int argc, char *argv[]) {
     
     if (strassen) {
         for(run = 0; run < n_runs; run++) {
-            mt1 = omp_get_wtime();
+            //mt1 = omp_get_wtime();
             
             if (new_dim != dim) {
-                C = sequential_strassen(A_new, B_new, new_dim);
+                C = sequential_strassen(A_new, B_new, new_dim, &t);
             } else {
-                C = sequential_strassen(A, B, new_dim);
+                C = sequential_strassen(A, B, new_dim, &t);
             }
             
-            mt2 = omp_get_wtime();
+            //mt2 = omp_get_wtime();
 
             verify_matmul(C, C_seq, dim);
             
             //*** Capture best run
             
-            if ((t_bs < 0) || (mt2 - mt1 < t_bs))
-                t_bs = mt2 - mt1;
+            if ((t_bs < 0) || (t < t_bs))
+                t_bs = t;
         }
         
         if (dim <= 10) {
@@ -230,6 +230,40 @@ int main(int argc, char *argv[]) {
         printf("Done computing \n");
         printf("Parallel matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
     }
+
+    t_bs = -1;
+    
+    if (strassen_parallel) {
+        for(run = 0; run < n_runs; run++) {
+            //mt1 = omp_get_wtime();
+            
+            if (new_dim != dim) {
+                C = parallel_strassen(A_new, B_new, new_dim, &t);
+            } else {
+                C = parallel_strassen(A, B, new_dim, &t);
+            }
+            
+            //mt2 = omp_get_wtime();
+
+            verify_matmul(C, C_seq, dim);
+            
+            //*** Capture best run
+            
+            if ((t_bs < 0) || (t < t_bs))
+                t_bs = t;
+        }
+        
+        if (dim <= 10) {
+            printf("Parallel Strassen: \n");
+            printf("C = ");
+            printmatrix(C, dim);
+        }
+        
+        printf("Done computing \n");
+        printf("Parallel Strassen matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
+    }
+
+
     // TODO: fix memory deallocation
     
     free(A);

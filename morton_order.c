@@ -1,3 +1,5 @@
+// http://www.netlib.org/utk/people/JackDongarra/CCDSC-2016/slides/talk34-walker.pdf
+
 double * allocate_array(int n) {
     double *T;
     T = (double*) malloc(sizeof(double) * n);

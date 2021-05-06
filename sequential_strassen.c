@@ -295,7 +295,9 @@ int sequential_strassen_recursion(double *C, double *A, double *B, int n, double
     return 0;
 }
 
-double ** sequential_strassen(double **A, double **B, int n){
+double ** sequential_strassen(double **A, double **B, int n, float *t){
+    double mt1, mt2; // Timing variables
+    
     double *R;
     R = allocate_array(n*n);
 
@@ -313,8 +315,11 @@ double ** sequential_strassen(double **A, double **B, int n){
 
     H = allocate_array(3*(n*n)/4); // size 3/4 of original matrix
 
-
+    mt1 = omp_get_wtime();
     sequential_strassen_recursion(R, rA, rB, n, H, depth);
+    mt2 = omp_get_wtime();
+
+    *t = mt2 - mt1;
     
     double **C = allocate_matrix(n);
     
