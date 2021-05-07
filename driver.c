@@ -215,6 +215,8 @@ int main(int argc, char *argv[]) {
             
             mt2 = omp_get_wtime();
             
+            verify_matmul(C, C_seq, dim);
+            
             //*** Capture best run
             
             if ((t_bs < 0) || (mt2 - mt1 < t_bs))
