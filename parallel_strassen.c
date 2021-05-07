@@ -1,16 +1,19 @@
 void parallel_sub(double *C, double *A, double *B, int n) {
     int i;
+    #pragma omp parallel for
     for(i = 0; i < n; i++) C[i] = A[i] - B[i];
 }
 
 void parallel_add(double *C, double *A, double *B, int n) {
     int i;
+    #pragma omp parallel for
     for(i = 0; i < n; i++) C[i] = A[i] + B[i];
 }
 
 double * parallel_matmul_strassen(double *C, double * A, double * B, int dim) {
     int i, j, k;
     
+    #pragma omp parallel for private(j,k)
     for(i = 0; i < dim; i++) {
         for(j = 0; j < dim; j++) {
             C[i*dim+j] = 0.0;
@@ -69,129 +72,60 @@ int parallel_strassen_recursion(double *C, double *A, double *B, int n, double *
     // Winograd's form of Strassen algorithm, only 15 additions, not 18
     // 6 temporary matrices
 
-    
-    
     // S3 = A11 - A21
-    #pragma omp task shared(N1) depend(out:N1)
     parallel_sub(N1, A11, A21, kk);
-    
     // T3 = B22 - B12
-    #pragma omp task shared(N2) depend(out:N2)
     parallel_sub(N2, B22, B12, kk);
-    
-//    #pragma omp taskwait
-    
-    
     // P7 = S3 * T3
-    #pragma omp task shared(N5) depend(in:N1,N2) depend(out:N5,N1,N2)
     parallel_strassen_recursion(N5, N1, N2, k, X_small, depth);
     
-//    #pragma omp taskwait
-    
     // S1 = A21 + A22
-    
-    #pragma omp task shared(N1) depend(inout:N1)
     parallel_add(N1, A21, A22, kk);
-    
     // T1 = B12 − B11
-    #pragma omp task shared(N2) depend(inout:N2)
     parallel_sub(N2, B12, B11, kk);
-    
-//    #pragma omp taskwait
-    
     // P5 = S1 * T1
-    #pragma omp task shared(N6) depend(in:N1,N2) depend(out:N6,N1,N2)
     parallel_strassen_recursion(N6, N1, N2, k, X_small, depth);
-    
-//    #pragma omp taskwait
 
     // S2 = S1 − A11
-    
-    #pragma omp task shared(N1) depend(inout:N1)
     parallel_sub(N1, N1, A11, kk);
-    
     // T2 = B22 − T1
-    #pragma omp task shared(N2) depend(inout:N2)
     parallel_sub(N2, B22, N2, kk);
-    
-//    #pragma omp taskwait
-    
     // P6 = S2 * T2
-    #pragma omp task shared(N4) depend(in:N1,N2) depend(out:N4,N1,N2)
     parallel_strassen_recursion(N4, N1, N2, k, X_small, depth);
     
-//    #pragma omp taskwait
-    
     // S4 = A12 − S2
-    #pragma omp task shared(N1) depend(inout:N1)
     parallel_sub(N1, A12, N1, kk);
-    
-//    #pragma omp taskwait
-    
     // P3 = S4 * B22
-    #pragma omp task shared(N3) depend(in:N1) depend(out:N3,N1)
     parallel_strassen_recursion(N3, N1, B22, k, X_small, depth);
 
-    // P1 = A11 * B11
-    #pragma omp task shared(N1) depend(inout:N1)
+    // P1 = A11 * B11 
     parallel_strassen_recursion(N1, A11, B11, k, X_small, depth);
-    
-//    #pragma omp taskwait
 
     // U2 = P1 + P6
-    #pragma omp task shared(N4) depend(inout:N1,N4)
     parallel_add(N4, N1, N4, kk);
-    
-//    #pragma omp taskwait
-    
     // U3 = U2 + P7
-    #pragma omp task shared(N5) depend(inout:N5,N4)
     parallel_add(N5, N4, N5, kk);
-    
-//    #pragma omp taskwait
-    
     // U4 = U2 + P5
-    #pragma omp task shared(N4) depend(inout:N4,N6)
     parallel_add(N4, N4, N6, kk);
-    
-//    #pragma omp taskwait
 
     // U7 = U3 + P5
-    #pragma omp task shared(N5) depend(in:N5) depend(inout:N6) 
     parallel_add(N6, N5, N6, kk); // final C22
-    
     // U5 = U4 + P3
-    #pragma omp task shared(N4) depend(in:N3) depend(inout:N4)
     parallel_add(N4, N4, N3, kk); // final C12
-    
+
     // T4 = T2 − B21
-    #pragma omp task shared(N2) depend(inout:N2)
     parallel_sub(N2, N2, B21, kk);
-    
-//    #pragma omp taskwait
-    
     // P4 = A22 * T4
-    #pragma omp task shared(N3) depend(in: N2) depend(out: N3)
     parallel_strassen_recursion(N3, A22, N2, k, X_small, depth);
 
-//    #pragma omp taskwait
-
     // U6 = U3 − P4
-    #pragma omp task shared(N5) depend(in:N3) depend(inout:N5)
     parallel_sub(N5, N5, N3, kk); // final C21
-    
-    // P2 = A12 * B21
-    #pragma omp task shared(N3) depend(out: N3)
-    parallel_strassen_recursion(N3, A12, B21, k, X_small, depth);
 
-//    #pragma omp taskwait
-    
+    // P2 = A12 * B21
+    parallel_strassen_recursion(N3, A12, B21, k, X_small, depth);
     // U1 = P1 + P2
-    #pragma omp task shared(N3) depend(in: N1) depend(inout: N3)
     parallel_add(N3, N1, N3, kk); // final C11
 
-    #pragma omp taskwait
-    
     return 0;
 }
 
@@ -212,9 +146,6 @@ double ** parallel_strassen(double **A, double **B, int n, float *t){
     H = allocate_array(3*(n*n)/4); // size 3/4 of original matrix
 
     mt1 = omp_get_wtime();
-    
-    #pragma omp parallel
-    #pragma omp single nowait
     parallel_strassen_recursion(R, rA, rB, n, H, depth);
     mt2 = omp_get_wtime();
 
