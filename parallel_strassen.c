@@ -280,6 +280,15 @@ int parallel_strassen_level_1(double *C, double *A, double *B, int n, double *X,
 int parallel_strassen(double **C, double **A, double **B, int n, float *t){
     double mt1, mt2; // Timing variables
 
+    if (n<8) {
+        mt1 = omp_get_wtime();
+        sequential_matmul(C, A, B, n);
+        mt2 = omp_get_wtime();
+
+        *t = mt2 - mt1;
+        return 0;
+    }
+
     double *R;
     R = allocate_array(n*n);
 
