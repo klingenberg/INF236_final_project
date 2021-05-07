@@ -2,11 +2,6 @@
 #include "cFiles.h"
 #include "limits.h"
 
-struct indeces {
-    int x;
-    int y;
-};
-
 void printmatrix(double ** A, int n) {
     int i, j;
     for(i = 0; i < n; i++) {
@@ -41,36 +36,6 @@ double ** allocate_matrix(int dim) {
     return C;
 }
 
-// Moser–De Bruijn sequence lookup and inverse lookup taken from:
-// https://gist.github.com/JLChnToZ/ec41b1b45987d0e1b40ceabc13920559
-
-int z_order_lookup(int x, int y) {
-    if(x < 0 || y < 0) return 0;
-    int result = 0;
-    int mask;
-    int offset = 0;
-    
-    for(mask = 1; x >= mask || y >= mask; mask <<= 1) {
-        result |= (x & mask) << offset++ | (y & mask) << offset;
-    }
-    
-    return result;
-}
-
-struct indeces z_order_inverse_lookup(int value) {
-    struct indeces idx;
-    idx.x = 0;
-    idx.y = 0;
-    int offset = 0;
-    int mask;
-    
-    for(mask = 1; value == offset + 1 || value >= 1 << offset + 1; mask <<= 1) {
-        idx.x |= (value >> offset++) & mask;
-        idx.y |= (value >> offset) & mask;
-    }
-    return idx;
-}
-
 int verify_matmul(double ** X, double **T, int dim) {
 
     int i, j;
@@ -90,7 +55,7 @@ int verify_matmul(double ** X, double **T, int dim) {
 
 int main(int argc, char *argv[]) {
     
-    int matmul = true;              /* Sequential Matrix Multiplication */
+    int matmul = false;              /* Sequential Matrix Multiplication */
     int strassen = true;           /* Sequential Strassen Algorithm */
     int matmul_parallel = true;    /* Parallel Matrix Multiplication */
     int strassen_parallel = true;  /* Parallel Strassen Algorithm */
@@ -186,7 +151,7 @@ int main(int argc, char *argv[]) {
             
             //mt2 = omp_get_wtime();
 
-            verify_matmul(C, C_seq, dim);
+            //verify_matmul(C, C_seq, dim);
             
             //*** Capture best run
             
@@ -245,7 +210,7 @@ int main(int argc, char *argv[]) {
             
             //mt2 = omp_get_wtime();
 
-            verify_matmul(C, C_seq, dim);
+            //verify_matmul(C, C_seq, dim);
             
             //*** Capture best run
             
@@ -268,7 +233,7 @@ int main(int argc, char *argv[]) {
     
     free(A);
     free(B);
-    free(C_seq);
+    //free(C_seq);
 
     if (strassen) {
         free(C);
