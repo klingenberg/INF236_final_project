@@ -277,7 +277,7 @@ int parallel_strassen_level_1(double *C, double *A, double *B, int n, double *X,
     return 0;
 }
 
-double ** parallel_strassen(double **A, double **B, int n, float *t){
+int parallel_strassen(double **C, double **A, double **B, int n, float *t){
     double mt1, mt2; // Timing variables
 
     double *R;
@@ -300,8 +300,6 @@ double ** parallel_strassen(double **A, double **B, int n, float *t){
 
     *t = mt2 - mt1;
     
-    double **C = allocate_matrix(n);
-    
     reorder_back_morton_array(C, R, n, depth);
     
     free(R);
@@ -309,7 +307,7 @@ double ** parallel_strassen(double **A, double **B, int n, float *t){
     free(rB);
     free(H);
 
-    return C;
+    return 0;
 
 }
 

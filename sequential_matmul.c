@@ -1,7 +1,6 @@
-double ** sequential_matmul(double ** A, double ** B, int dim) {
+int sequential_matmul(double ** C, double ** A, double ** B, int dim) {
     
     int i, j, k;
-    double **C = allocate_matrix(dim);
     
     // *********************************
     // Sequential Matrix Multiplication
@@ -18,5 +17,5 @@ double ** sequential_matmul(double ** A, double ** B, int dim) {
         } // k
     } // i
     
-    return C;
+    return 0;
 }

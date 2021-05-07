@@ -1,14 +1,12 @@
-
-double ** parallel_matmul(double ** A, double ** B, int dim) {
+int parallel_matmul(double ** C, double ** A, double ** B, int dim) {
     
     int i, j, k;
-    double **C = allocate_matrix(dim);
-    
+  
     // *********************************
     // Parallel Matrix Multiplication
     // *********************************
     
-#pragma omp parallel for private(j,k)
+    #pragma omp parallel for private(j,k)
     for(i = 0; i < dim; i++) {
         for(j = 0; j < dim; j++) {
             C[i][j] = 0.0;
@@ -20,5 +18,5 @@ double ** parallel_matmul(double ** A, double ** B, int dim) {
         } // k
     } // i
     
-    return C;
+    return 0;
 }
