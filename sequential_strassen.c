@@ -158,7 +158,7 @@ void matmul_morton(double * C,double * A, double * B, int dim, int *S) {
 }
 */
 
-double * matmul(double *C, double * A, double * B, int dim) {
+int matmul(double *C, double * A, double * B, int dim) {
     int i, j, k;
     
     for(i = 0; i < dim; i++) {
@@ -171,8 +171,6 @@ double * matmul(double *C, double * A, double * B, int dim) {
             } // j
         } // k
     } // i
-
-    return C;
 }
 
 int sequential_strassen_recursion(double *C, double *A, double *B, int n, double *X, int depth){
@@ -295,9 +293,9 @@ int sequential_strassen_recursion(double *C, double *A, double *B, int n, double
     return 0;
 }
 
-double ** sequential_strassen(double **A, double **B, int n, float *t){
+double ** parallel_strassen_recursion(double **A, double **B, int n, float *t){
     double mt1, mt2; // Timing variables
-    
+
     double *R;
     R = allocate_array(n*n);
 

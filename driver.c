@@ -179,9 +179,9 @@ int main(int argc, char *argv[]) {
             //mt1 = omp_get_wtime();
             
             if (new_dim != dim) {
-                C = sequential_strassen(A_new, B_new, new_dim, &t);
+                C = parallel_strassen_recursion(A_new, B_new, new_dim, &t);
             } else {
-                C = sequential_strassen(A, B, new_dim, &t);
+                C = parallel_strassen_recursion(A, B, new_dim, &t);
             }
             
             //mt2 = omp_get_wtime();
