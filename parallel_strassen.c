@@ -1,21 +1,21 @@
 void parallel_sub(double *C, double *A, double *B, int n) {
     int i;
     
-    #pragma omp parallel for
+    #pragma omp for
     for(i = 0; i < n; i++) C[i] = A[i] - B[i];
 }
 
 void parallel_add(double *C, double *A, double *B, int n) {
     int i;
     
-    #pragma omp parallel for
+    #pragma omp for
     for(i = 0; i < n; i++) C[i] = A[i] + B[i];
 }
 
-double * parallel_matmul_strassen(double *C, double * A, double * B, int dim) {
+void parallel_matmul_strassen(double *C, double * A, double * B, int dim) {
     int i, j, k;
 
-    #pragma omp parallel for private(j,k)
+    #pragma omp for private(j,k)
     for(i = 0; i < dim; i++) {
         for(j = 0; j < dim; j++) {
             C[i*dim+j] = 0.0;
@@ -26,8 +26,6 @@ double * parallel_matmul_strassen(double *C, double * A, double * B, int dim) {
             } // j
         } // k
     } // i
-
-    return C;
 }
 
 int parallel_strassen_recursion(double *C, double *A, double *B, int n, double *X, int depth){
@@ -74,13 +72,16 @@ int parallel_strassen_recursion(double *C, double *A, double *B, int n, double *
     // Winograd's form of Strassen algorithm, only 15 additions, not 18
     // 6 temporary matrices
 
+    #pragma omp parallel
+    {
+
     // S3 = A11 - A21
     parallel_sub(N1, A11, A21, kk);
     // T3 = B22 - B12
     parallel_sub(N2, B22, B12, kk);
 
     // P7 = S3 * T3
-    parallel_strassen_recursion(N5, N1, N2, k, X_small, depth);
+    parallel_matmul_strassen(N5, N1, N2, k);
     
     // S1 = A21 + A22
     parallel_add(N1, A21, A22, kk);
@@ -89,7 +90,7 @@ int parallel_strassen_recursion(double *C, double *A, double *B, int n, double *
     parallel_sub(N2, B12, B11, kk);
 
     // P5 = S1 * T1
-    parallel_strassen_recursion(N6, N1, N2, k, X_small, depth);
+    parallel_matmul_strassen(N6, N1, N2, k);
 
     // S2 = S1 − A11
     parallel_sub(N1, N1, A11, kk);
@@ -98,16 +99,16 @@ int parallel_strassen_recursion(double *C, double *A, double *B, int n, double *
     parallel_sub(N2, B22, N2, kk);
     
     // P6 = S2 * T2
-    parallel_strassen_recursion(N4, N1, N2, k, X_small, depth);
+    parallel_matmul_strassen(N4, N1, N2, k);
     
     // S4 = A12 − S2
     parallel_sub(N1, A12, N1, kk);
     
     // P3 = S4 * B22
-    parallel_strassen_recursion(N3, N1, B22, k, X_small, depth);
+    parallel_matmul_strassen(N3, N1, B22, k);
 
     // P1 = A11 * B11
-    parallel_strassen_recursion(N1, A11, B11, k, X_small, depth);
+    parallel_matmul_strassen(N1, A11, B11, k);
 
     // U2 = P1 + P6
     parallel_add(N4, N1, N4, kk);
@@ -128,17 +129,19 @@ int parallel_strassen_recursion(double *C, double *A, double *B, int n, double *
     parallel_sub(N2, N2, B21, kk);
 
     // P4 = A22 * T4
-    parallel_strassen_recursion(N3, A22, N2, k, X_small, depth);
+    parallel_matmul_strassen(N3, A22, N2, k);
 
     // U6 = U3 − P4
     parallel_sub(N5, N5, N3, kk); // final C21
 
     // P2 = A12 * B21
-    parallel_strassen_recursion(N3, A12, B21, k, X_small, depth);
+    parallel_matmul_strassen(N3, A12, B21, k);
 
     // U1 = P1 + P2
     parallel_add(N3, N1, N3, kk); // final C11
   
+    }
+
     return 0;
 }
 
@@ -148,7 +151,7 @@ double ** parallel_strassen(double **A, double **B, int n, float *t){
     double *R;
     R = allocate_array(n*n);
 
-    int depth = 32;
+    int depth = n/2;
 
     double *rA, *rB;
     rA = reorder_to_morton_array(A, n, depth);
