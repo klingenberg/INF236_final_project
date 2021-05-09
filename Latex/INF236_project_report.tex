@@ -81,15 +81,15 @@ In this section all the implemented algorithms are explained in further detail.
 \Statex
 \Function{strassen}{$\mathbf{A}, \mathbf{B}, n$}
 	\If {n == cutoff}
-		\State \Return {$\mathbf{A} * \mathbf{B}$}
+		\State \Return \Call{matmul}{$\mathbf{A}, \mathbf{B}$}
 	\EndIf
-	\State {$\mathbf{P}_1 = strassen(\mathbf{A}_{00} + \mathbf{A}_{11},  \mathbf{B}_{00} + \mathbf{B}_{11}, \frac{n}{2})$}
-	\State {$\mathbf{P}_2 = strassen(\mathbf{A}_{10} + \mathbf{A}_{11},  \mathbf{B}_{00}, \frac{n}{2})$}
-	\State {$\mathbf{P}_3 = strassen(\mathbf{A}_{00},  \mathbf{B}_{01} - \mathbf{B}_{11}, \frac{n}{2})$}
-	\State {$\mathbf{P}_4 = strassen(\mathbf{A}_{11},  \mathbf{B}_{10} - \mathbf{B}_{00}, \frac{n}{2})$}
-	\State {$\mathbf{P}_5 = strassen(\mathbf{A}_{00} + \mathbf{A}_{01},  \mathbf{B}_{11}, \frac{n}{2})$}
-	\State {$\mathbf{P}_6 = strassen(\mathbf{A}_{10} - \mathbf{A}_{00},  \mathbf{B}_{00} + \mathbf{B}_{01}, \frac{n}{2})$}
-	\State {$\mathbf{P}_7 = strassen(\mathbf{A}_{01} - \mathbf{A}_{11},  \mathbf{B}_{10} + \mathbf{B}_{11}, \frac{n}{2})$}
+	\State {$\mathbf{P}_1 = \Call{strassen}{\mathbf{A}_{00} + \mathbf{A}_{11},  \mathbf{B}_{00} + \mathbf{B}_{11}, \frac{n}{2}$}}
+	\State {$\mathbf{P}_2 = \Call{strassen}{\mathbf{A}_{10} + \mathbf{A}_{11},  \mathbf{B}_{00}, \frac{n}{2}$}}
+	\State {$\mathbf{P}_3 = \Call{strassen}{\mathbf{A}_{00},  \mathbf{B}_{01} - \mathbf{B}_{11}, \frac{n}{2}$}}
+	\State {$\mathbf{P}_4 = \Call{strassen}{\mathbf{A}_{11},  \mathbf{B}_{10} - \mathbf{B}_{00}, \frac{n}{2}$}}
+	\State {$\mathbf{P}_5 = \Call{strassen}{\mathbf{A}_{00} + \mathbf{A}_{01},  \mathbf{B}_{11}, \frac{n}{2}$}}
+	\State {$\mathbf{P}_6 = \Call{strassen}{\mathbf{A}_{10} - \mathbf{A}_{00},  \mathbf{B}_{00} + \mathbf{B}_{01}, \frac{n}{2}$}}
+	\State {$\mathbf{P}_7 = \Call{strassen}{\mathbf{A}_{01} - \mathbf{A}_{11},  \mathbf{B}_{10} + \mathbf{B}_{11}, \frac{n}{2}$}}
 	\State {$\mathbf{C}_{00} = \mathbf{P}_1 + \mathbf{P}_4 - \mathbf{P}_5 + \mathbf{P}_7$}
 	\State {$\mathbf{C}_{01} = \mathbf{P}_3 + \mathbf{P}_5$}
 	\State {$\mathbf{C}_{10} = \mathbf{P}_2 + \mathbf{P}_4$}
