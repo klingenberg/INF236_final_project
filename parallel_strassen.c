@@ -28,7 +28,7 @@ void parallel_matmul_strassen(double *C, double * A, double * B, int dim) {
     } // i
 }
 
-int parallel_strassen_level_2(double *C, double *A, double *B, int n, double *X, int depth){
+int parallel_strassen_end(double *C, double *A, double *B, int n, double *X, int depth){
 
     printf("level 2 depth: %d, n: %d\n",depth,n);
 
@@ -40,14 +40,13 @@ int parallel_strassen_level_2(double *C, double *A, double *B, int n, double *X,
     // *********************************
     // Sequential Strassen Algorithm
     // *********************************
-    
-    // Depth level:
-    if (n <= depth) {
-        parallel_matmul_strassen(C, A, B, n);
-        return 0;
-    }
+
+    // printf("last layer strassen n: %d, depth: %d\n",n,depth);
     
     int k = n / 2;
+
+    // printf("parallel matmul for %d x %d\n",k,k);
+
     int kk = k*k;
 
     A11 = &A[0];
@@ -147,7 +146,9 @@ int parallel_strassen_level_2(double *C, double *A, double *B, int n, double *X,
     return 0;
 }
 
-int parallel_strassen_level_1(double *C, double *A, double *B, int n, double *X, int depth){
+int parallel_strassen_recursion(double *C, double *A, double *B, int n, double *X, int depth){
+
+    // printf("recursive strassen n: %d, depth: %d\n",n,depth);
 
     printf("level 1 depth: %d, n: %d\n",depth,n);
 
@@ -159,12 +160,6 @@ int parallel_strassen_level_1(double *C, double *A, double *B, int n, double *X,
     // *********************************
     // Sequential Strassen Algorithm
     // *********************************
-    
-    // Depth level:
-    if (n <= depth) {
-        parallel_matmul_strassen(C, A, B, n);
-        return 0;
-    }
     
     int k = n / 2;
     int kk = k*k;
@@ -202,7 +197,12 @@ int parallel_strassen_level_1(double *C, double *A, double *B, int n, double *X,
     parallel_sub(N2, B22, B12, kk);
     }
     // P7 = S3 * T3
-    parallel_strassen_level_2(N5, N1, N2, k, X_small, depth);
+    if (k == depth) {
+        parallel_strassen_end(N5, N1, N2, k, X_small, depth);
+    } else {
+        parallel_strassen_recursion(N5, N1, N2, k, X_small, depth);
+    }
+    
     
     #pragma omp parallel
     {
@@ -214,7 +214,11 @@ int parallel_strassen_level_1(double *C, double *A, double *B, int n, double *X,
     }
 
     // P5 = S1 * T1
-    parallel_strassen_level_2(N6, N1, N2, k, X_small, depth);
+    if (k == depth) {
+        parallel_strassen_end(N6, N1, N2, k, X_small, depth);
+    } else {
+        parallel_strassen_recursion(N6, N1, N2, k, X_small, depth);
+    }
 
     #pragma omp parallel
     {
@@ -226,7 +230,12 @@ int parallel_strassen_level_1(double *C, double *A, double *B, int n, double *X,
     }
 
     // P6 = S2 * T2
-    parallel_strassen_level_2(N4, N1, N2, k, X_small, depth);
+    if (k == depth) {
+        parallel_strassen_end(N4, N1, N2, k, X_small, depth);
+    } else {
+        parallel_strassen_recursion(N4, N1, N2, k, X_small, depth);
+    }
+    
     
     #pragma omp parallel
     {
@@ -234,10 +243,18 @@ int parallel_strassen_level_1(double *C, double *A, double *B, int n, double *X,
     parallel_sub(N1, A12, N1, kk);
     }
     // P3 = S4 * B22
-    parallel_strassen_level_2(N3, N1, B22, k, X_small, depth);
+    if (k == depth) {
+        parallel_strassen_end(N3, N1, B22, k, X_small, depth);
+    } else {
+        parallel_strassen_recursion(N3, N1, B22, k, X_small, depth);
+    }
 
     // P1 = A11 * B11
-    parallel_strassen_level_2(N1, A11, B11, k, X_small, depth);
+    if (k == depth) {
+        parallel_strassen_end(N1, A11, B11, k, X_small, depth);
+    } else {
+        parallel_strassen_recursion(N1, A11, B11, k, X_small, depth);
+    }
 
     #pragma omp parallel
     {
@@ -261,7 +278,11 @@ int parallel_strassen_level_1(double *C, double *A, double *B, int n, double *X,
     }
 
     // P4 = A22 * T4
-    parallel_strassen_level_2(N3, A22, N2, k, X_small, depth);
+    if (k == depth) {
+        parallel_strassen_end(N3, A22, N2, k, X_small, depth);
+    } else {
+        parallel_strassen_recursion(N3, A22, N2, k, X_small, depth);
+    }
 
     #pragma omp parallel
     {
@@ -270,7 +291,11 @@ int parallel_strassen_level_1(double *C, double *A, double *B, int n, double *X,
     }
 
     // P2 = A12 * B21
-    parallel_strassen_level_2(N3, A12, B21, k, X_small, depth);
+    if (k == depth) {
+        parallel_strassen_end(N3, A12, B21, k, X_small, depth);
+    } else {
+        parallel_strassen_recursion(N3, A12, B21, k, X_small, depth);
+    }
 
     #pragma omp parallel
     {
@@ -284,9 +309,14 @@ int parallel_strassen_level_1(double *C, double *A, double *B, int n, double *X,
 int parallel_strassen(double **C, double **A, double **B, int n, float *t){
     double mt1, mt2; // Timing variables
 
-    if (n<8) {
+    //int layers = 3;
+    //int depth = n/(1 << (layers-1));
+    int depth = 512;
+    int not_reordered_submatrix_size = depth/2;
+
+    if (n<4*depth) {
         mt1 = omp_get_wtime();
-        sequential_matmul(C, A, B, n);
+        parallel_matmul(C, A, B, n);
         mt2 = omp_get_wtime();
 
         *t = mt2 - mt1;
@@ -296,11 +326,9 @@ int parallel_strassen(double **C, double **A, double **B, int n, float *t){
     double *R;
     R = allocate_array(n*n);
 
-    int depth = n/4;
-
     double *rA, *rB;
-    rA = reorder_to_morton_array(A, n, depth);
-    rB = reorder_to_morton_array(B, n, depth);
+    rA = reorder_to_morton_array(A, n, not_reordered_submatrix_size);
+    rB = reorder_to_morton_array(B, n, not_reordered_submatrix_size);
     // help variables
     double *H;
 
@@ -308,12 +336,12 @@ int parallel_strassen(double **C, double **A, double **B, int n, float *t){
 
     mt1 = omp_get_wtime();
 
-    parallel_strassen_level_1(R, rA, rB, n, H, depth);
+    parallel_strassen_recursion(R, rA, rB, n, H, depth);
     mt2 = omp_get_wtime();
 
     *t = mt2 - mt1;
     
-    reorder_back_morton_array(C, R, n, depth);
+    reorder_back_morton_array(C, R, n, not_reordered_submatrix_size);
     
     free(R);
     free(rA);
