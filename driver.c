@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
     C = allocate_matrix(dim,ptrC);
 
 
-    srand(time(NULL));
+    //srand(time(NULL));
     
     for(i = 0; i < dim; i++) {
         for(j = 0; j < dim; j++) {
