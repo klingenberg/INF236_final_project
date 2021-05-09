@@ -38,14 +38,13 @@ int parallel_strassen_end(double *C, double *A, double *B, int n, double *X, int
     // *********************************
     // Sequential Strassen Algorithm
     // *********************************
-    
-    // Depth level:
-    if (n <= depth) {
-        parallel_matmul_strassen(C, A, B, n);
-        return 0;
-    }
+
+    // printf("last layer strassen n: %d, depth: %d\n",n,depth);
     
     int k = n / 2;
+
+    // printf("parallel matmul for %d x %d\n",k,k);
+
     int kk = k*k;
 
     A11 = &A[0];
@@ -147,7 +146,7 @@ int parallel_strassen_end(double *C, double *A, double *B, int n, double *X, int
 
 int parallel_strassen_recursion(double *C, double *A, double *B, int n, double *X, int depth){
 
-    //printf("n: %d, depth: %d\n",n,depth);
+    // printf("recursive strassen n: %d, depth: %d\n",n,depth);
 
     double *A11, *A21, *A12, *A22;
     double *B11, *B21, *B12, *B22;
@@ -157,12 +156,6 @@ int parallel_strassen_recursion(double *C, double *A, double *B, int n, double *
     // *********************************
     // Sequential Strassen Algorithm
     // *********************************
-    
-    // Depth level:
-    if (n <= depth) {
-        parallel_matmul_strassen(C, A, B, n);
-        return 0;
-    }
     
     int k = n / 2;
     int kk = k*k;
@@ -312,7 +305,7 @@ int parallel_strassen_recursion(double *C, double *A, double *B, int n, double *
 int parallel_strassen(double **C, double **A, double **B, int n, float *t){
     double mt1, mt2; // Timing variables
 
-    int layers = 5; //
+    int layers = 2; //
 
     if (n<4*(1 << (layers-1))) {
         mt1 = omp_get_wtime();
@@ -327,10 +320,13 @@ int parallel_strassen(double **C, double **A, double **B, int n, float *t){
     R = allocate_array(n*n);
 
     int depth = n/(1 << (layers-1));
+    int not_reordered_submatrix_size = depth/2;
+
+    // printf("not reordered size: %d\n",not_reordered_submatrix_size);
 
     double *rA, *rB;
-    rA = reorder_to_morton_array(A, n, depth);
-    rB = reorder_to_morton_array(B, n, depth);
+    rA = reorder_to_morton_array(A, n, not_reordered_submatrix_size);
+    rB = reorder_to_morton_array(B, n, not_reordered_submatrix_size);
     // help variables
     double *H;
 
@@ -343,7 +339,7 @@ int parallel_strassen(double **C, double **A, double **B, int n, float *t){
 
     *t = mt2 - mt1;
     
-    reorder_back_morton_array(C, R, n, depth);
+    reorder_back_morton_array(C, R, n, not_reordered_submatrix_size);
     
     free(R);
     free(rA);
