@@ -1,33 +1,3 @@
-void parallel_sub(double *C, double *A, double *B, int n) {
-    int i;
-    
-    #pragma omp for
-    for(i = 0; i < n; i++) C[i] = A[i] - B[i];
-}
-
-void parallel_add(double *C, double *A, double *B, int n) {
-    int i;
-    
-    #pragma omp for
-    for(i = 0; i < n; i++) C[i] = A[i] + B[i];
-}
-
-void parallel_matmul_strassen(double *C, double * A, double * B, int dim) {
-    int i, j, k;
-
-    #pragma omp for private(j,k)
-    for(i = 0; i < dim; i++) {
-        for(j = 0; j < dim; j++) {
-            C[i*dim+j] = 0.0;
-        } // j
-        for(k = 0; k < dim; k++) {
-            for (j = 0; j < dim; j++) {
-                C[i*dim+j] += A[i*dim+k] * B[k*dim+j];
-            } // j
-        } // k
-    } // i
-}
-
 int parallel_strassen_level_2(double *C, double *A, double *B, int n, double *X, int depth){
 
     printf("level 2 depth: %d, n: %d\n",depth,n);
@@ -281,7 +251,7 @@ int parallel_strassen_level_1(double *C, double *A, double *B, int n, double *X,
     return 0;
 }
 
-int parallel_strassen(double **C, double **A, double **B, int n, float *t){
+int parallel_strassen_2_layers(double **C, double **A, double **B, int n, float *t){
     double mt1, mt2; // Timing variables
 
     if (n<8) {

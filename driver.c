@@ -58,6 +58,7 @@ int main(int argc, char *argv[]) {
     int matmul = false;              /* Sequential Matrix Multiplication */
     int strassen = false;           /* Sequential Strassen Algorithm */
     int matmul_parallel = true;    /* Parallel Matrix Multiplication */
+    int strassen_parallel_2_layers = true;  /* Parallel Strassen Algorithm */
     int strassen_parallel = true;  /* Parallel Strassen Algorithm */
     
     double **A, **B, **C_seq, **C, **A_new, **B_new, **C_new;
@@ -203,6 +204,36 @@ int main(int argc, char *argv[]) {
         
         printf("Done computing \n");
         printf("Parallel matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
+    }
+
+    t_bs = -1;
+    
+    if (strassen_parallel_2_layers) {
+        for(run = 0; run < n_runs; run++) {
+            
+            if (new_dim != dim) {
+                parallel_strassen(C_new, A_new, B_new, new_dim, &t);
+                //verify_matmul(C_new, C_seq, dim);
+            } else {
+                parallel_strassen(C, A, B, new_dim, &t);
+                //verify_matmul(C, C_seq, dim);
+            }
+            
+            //*** Capture best run
+            
+            if ((t_bs < 0) || (t < t_bs))
+                t_bs = t;
+        }
+        /*
+        if (dim <= 10) {
+            printf("Parallel Strassen: \n");
+            printf("C = ");
+            printmatrix(C, dim);
+        }
+        */
+        
+        printf("Done computing \n");
+        printf("Parallel 2-layers Strassen matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
     }
 
     t_bs = -1;
