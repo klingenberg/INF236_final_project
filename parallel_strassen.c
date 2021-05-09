@@ -305,11 +305,14 @@ int parallel_strassen_recursion(double *C, double *A, double *B, int n, double *
 int parallel_strassen(double **C, double **A, double **B, int n, float *t){
     double mt1, mt2; // Timing variables
 
-    int layers = 2; //
+    //int layers = 3;
+    //int depth = n/(1 << (layers-1));
+    int depth = 256;
+    int not_reordered_submatrix_size = depth/2;
 
-    if (n<4*(1 << (layers-1))) {
+    if (n<4*depth) {
         mt1 = omp_get_wtime();
-        sequential_matmul(C, A, B, n);
+        parallel_matmul(C, A, B, n);
         mt2 = omp_get_wtime();
 
         *t = mt2 - mt1;
@@ -318,11 +321,6 @@ int parallel_strassen(double **C, double **A, double **B, int n, float *t){
 
     double *R;
     R = allocate_array(n*n);
-
-    int depth = n/(1 << (layers-1));
-    int not_reordered_submatrix_size = depth/2;
-
-    // printf("not reordered size: %d\n",not_reordered_submatrix_size);
 
     double *rA, *rB;
     rA = reorder_to_morton_array(A, n, not_reordered_submatrix_size);
