@@ -307,7 +307,7 @@ int parallel_strassen(double **C, double **A, double **B, int n, float *t){
 
     //int layers = 3;
     //int depth = n/(1 << (layers-1));
-    int depth = 256;
+    int depth = 512;
     int not_reordered_submatrix_size = depth/2;
 
     if (n<4*depth) {

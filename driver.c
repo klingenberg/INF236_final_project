@@ -55,8 +55,8 @@ int verify_matmul(double ** X, double **T, int dim) {
 
 int main(int argc, char *argv[]) {
     
-    int matmul = true;              /* Sequential Matrix Multiplication */
-    int strassen = true;           /* Sequential Strassen Algorithm */
+    int matmul = false;              /* Sequential Matrix Multiplication */
+    int strassen = false;           /* Sequential Strassen Algorithm */
     int matmul_parallel = true;    /* Parallel Matrix Multiplication */
     int strassen_parallel = true;  /* Parallel Strassen Algorithm */
     
@@ -150,10 +150,10 @@ int main(int argc, char *argv[]) {
 
             if (new_dim != dim) {
                 sequential_strassen(C_new, A_new, B_new, new_dim, &t);
-                verify_matmul(C_new, C_seq, dim);
+                //verify_matmul(C_new, C_seq, dim);
             } else {
                 sequential_strassen(C, A, B, new_dim, &t);
-                verify_matmul(C, C_seq, dim);
+                //verify_matmul(C, C_seq, dim);
             }
 
             
@@ -186,7 +186,7 @@ int main(int argc, char *argv[]) {
             
             mt2 = omp_get_wtime();
             
-            verify_matmul(C, C_seq, dim);
+            //verify_matmul(C, C_seq, dim);
             
             //*** Capture best run
             
@@ -212,10 +212,10 @@ int main(int argc, char *argv[]) {
             
             if (new_dim != dim) {
                 parallel_strassen(C_new, A_new, B_new, new_dim, &t);
-                verify_matmul(C_new, C_seq, dim);
+                //verify_matmul(C_new, C_seq, dim);
             } else {
                 parallel_strassen(C, A, B, new_dim, &t);
-                verify_matmul(C, C_seq, dim);
+                //verify_matmul(C, C_seq, dim);
             }
             
             //*** Capture best run
