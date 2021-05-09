@@ -44,6 +44,22 @@ In this section all the implemented algorithms are explained in further detail.
 
 \subsection{Strassen Algorithm}
 
+$$
+\begin{pmatrix}
+A_{11} & A_{12} \\
+A_{21} & A_{22} 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+B_{11} & B_{12} \\
+B_{21} & B_{22} 
+\end{pmatrix}
+=
+\begin{pmatrix}
+A_{00}B_{00}+A_{01}B_{10} & A_{00}B_{01}+A_{01}B_{11} \\
+A_{10}B_{00}+A_{11}B_{10} & A_{10}B_{01}+A_{01}B_{11} 
+\end{pmatrix}
+$$
 \subsection{parallel Matrix Multiplication}
 
 \subsection{parallel Strassen Algorithm}
