@@ -1,6 +1,6 @@
 int parallel_strassen_level_2(double *C, double *A, double *B, int n, double *X, int depth){
 
-    printf("level 2 depth: %d, n: %d\n",depth,n);
+    // printf("level 2 depth: %d, n: %d\n",depth,n);
 
     double *A11, *A21, *A12, *A22;
     double *B11, *B21, *B12, *B22;
@@ -119,7 +119,7 @@ int parallel_strassen_level_2(double *C, double *A, double *B, int n, double *X,
 
 int parallel_strassen_level_1(double *C, double *A, double *B, int n, double *X, int depth){
 
-    printf("level 1 depth: %d, n: %d\n",depth,n);
+    // printf("level 1 depth: %d, n: %d\n",depth,n);
 
     double *A11, *A21, *A12, *A22;
     double *B11, *B21, *B12, *B22;
