@@ -212,10 +212,10 @@ int main(int argc, char *argv[]) {
         for(run = 0; run < n_runs; run++) {
             
             if (new_dim != dim) {
-                parallel_strassen(C_new, A_new, B_new, new_dim, &t);
+                parallel_strassen_2_layers(C_new, A_new, B_new, new_dim, &t);
                 //verify_matmul(C_new, C_seq, dim);
             } else {
-                parallel_strassen(C, A, B, new_dim, &t);
+                parallel_strassen_2_layers(C, A, B, new_dim, &t);
                 //verify_matmul(C, C_seq, dim);
             }
             
