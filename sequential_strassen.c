@@ -46,10 +46,7 @@ int sequential_strassen_recursion(double *C, double *A, double *B, int n, double
     // *********************************
     
     // Depth level:
-    if (n <= depth) { // depth) {
-        //matmul_recursive(C, A, B, n, X);
-        //matmul_morton(C, A, B, n, M);
-        //matmul_hardcoded_4x4(C, A, B, n);
+    if (n <= depth) {
         matmul(C, A, B, n);
         return 0;
     }

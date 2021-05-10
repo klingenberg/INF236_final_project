@@ -60,6 +60,12 @@ int main(int argc, char *argv[]) {
     int matmul_parallel = true;    /* Parallel Matrix Multiplication */
     int strassen_parallel_2_layers = true;  /* Parallel Strassen Algorithm */
     int strassen_parallel = true;  /* Parallel Strassen Algorithm */
+
+    sscanf(argv[2], "%d", &matmul);
+    sscanf(argv[3], "%d", &strassen);
+    sscanf(argv[4], "%d", &matmul_parallel);
+    sscanf(argv[5], "%d", &strassen_parallel_2_layers);
+    sscanf(argv[6], "%d", &strassen_parallel);
     
     double **A, **B, **C_seq, **C, **A_new, **B_new, **C_new;
     double *ptrA, *ptrB, *ptrA_new, *ptrB_new, *ptrC_seq, *ptrC, *ptrC_new;
