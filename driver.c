@@ -55,8 +55,8 @@ int verify_matmul(double ** X, double **T, int dim) {
 
 int main(int argc, char *argv[]) {
     
-    int matmul = false;              /* Sequential Matrix Multiplication */
-    int strassen = false;           /* Sequential Strassen Algorithm */
+    int matmul = true;              /* Sequential Matrix Multiplication */
+    int strassen = true;           /* Sequential Strassen Algorithm */
     int matmul_parallel = true;    /* Parallel Matrix Multiplication */
     int strassen_parallel_2_layers = true;  /* Parallel Strassen Algorithm */
     int strassen_parallel = true;  /* Parallel Strassen Algorithm */
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
     
     t_bs = -1;
     
-    printf("Allocating memory \n");
+    //printf("Allocating memory \n");
     
     A = allocate_matrix(dim,ptrA);
     B = allocate_matrix(dim,ptrB);
@@ -145,8 +145,11 @@ int main(int argc, char *argv[]) {
             printmatrix(C_seq, dim);
         }
         
-        printf("Done computing \n");
-        printf("Simple matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
+        // printf("Done computing \n");
+        // printf("Simple matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
+        printf("%f, ", t_bs);
+    } else {
+        printf(", ");
     }
     
     t_bs = -1;
@@ -178,8 +181,12 @@ int main(int argc, char *argv[]) {
             printmatrix(C, dim);
         }*/
         
-        printf("Done computing \n");
-        printf("Strassen matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
+        //printf("Done computing \n");
+        //printf("Strassen matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
+    
+    printf("%f, ", t_bs);
+    } else {
+        printf(", ");
     }
     
     t_bs = -1;
@@ -208,8 +215,11 @@ int main(int argc, char *argv[]) {
         }
         */
         
-        printf("Done computing \n");
-        printf("Parallel matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
+        // printf("Done computing \n");
+        // printf("Parallel matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
+        printf("%f, ", t_bs);
+    } else {
+        printf(", ");
     }
 
     t_bs = -1;
@@ -238,8 +248,11 @@ int main(int argc, char *argv[]) {
         }
         */
         
-        printf("Done computing \n");
-        printf("Parallel 2-layers Strassen matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
+        //printf("Done computing \n");
+        //printf("Parallel 2-layers Strassen matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
+    printf("%f, ", t_bs);
+    } else {
+        printf(", ");
     }
 
     t_bs = -1;
@@ -268,10 +281,14 @@ int main(int argc, char *argv[]) {
         }
         */
         
-        printf("Done computing \n");
-        printf("Parallel Strassen matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
+        //printf("Done computing \n");
+        //printf("Parallel Strassen matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
+    printf("%f ", t_bs);
+    } else {
+        printf(" ");
     }
 
+    printf("\n");
     
     free(A);
     free(ptrA);
