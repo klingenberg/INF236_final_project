@@ -1,9 +1,5 @@
 [0] Config.pm:304> INFO - This is Biber 2.14
 [0] Config.pm:307> INFO - Logfile is 'INF236_project_report.blg'
-[82] biber-darwin:322> INFO - === Sun May  9, 2021, 18:55:07
-[99] Biber.pm:415> INFO - Reading 'INF236_project_report.bcf'
-[205] Biber.pm:943> INFO - Found 1 citekeys in bib section 0
-[218] Biber.pm:4256> INFO - Processing section 0
-[219] Utils.pm:75> INFO - Globbing data source 'citations.bib'
-[219] Utils.pm:91> INFO - Globbed data source 'citations.bib' to citations.bib
-[229] Biber.pm:4455> INFO - Looking for bibtex format file 'citations.bib' for section 0
+[86] biber-darwin:322> INFO - === Mon May 10, 2021, 12:35:06
+[100] Biber.pm:415> INFO - Reading 'INF236_project_report.bcf'
+[191] Utils.pm:304> WARN - No data sources defined!
