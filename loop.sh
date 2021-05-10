@@ -5,11 +5,11 @@ declare -a threads=( 1 2 5 10 20 40 60 )
 
 counter2=256
 
-while [ $counter2 -le 4096 ]
+while [ $counter2 -le 8192 ]
 do
     for i in "${threads[@]}"
     do
-        export OMP_SET_NUM_THREADS=$i
+        export OMP_NUM_THREADS=$i
         ex1=1
         ex2=1
         if [ $i -gt 1 ]
