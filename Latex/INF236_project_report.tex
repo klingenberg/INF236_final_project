@@ -53,8 +53,12 @@ but is harder to implement.
 In this section all the implemented algorithms are explained in further detail.
 
 \subsection{Matrix Multiplication}
-
-
+The standard $\mathcal{O}(n^3)$ algorithm is simple. Each element $cc_{ij}$ of 
+the resulting matrix is calculated as $c_{ij} =\sum^k a_{ik} \cdot b_{kj}$.
+It is possible to implement the calculation with only three nested for-loops, but 
+matrices are stored row-wise, so it is better to access it in consecutive order.
+Because of that, we used the following implementation. Complexity is still $\mathcal{O}(n^3)$,
+but it runs faster.
 
 \begin{algorithm}[H] 
 \caption{Matrix Multiplication}
@@ -80,6 +84,9 @@ In this section all the implemented algorithms are explained in further detail.
 \end{algorithm}
 
 \subsection{Parallel Matrix Multiplication}
+We just parallelized the outermost loop of the simple matrix multiplication algorithm
+described in previous section.
+
 \subsection{Strassen Algorithm}
 
 The matrix multiplication can be formulated in terms of block matrices:
@@ -140,17 +147,21 @@ for these multiplications.
 \end{algorithmic}
 \end{algorithm}
 
-
+We used Winograd's version of Strassen’s algorithm described in \cite{boyer2009memory}.
+It needs only 15 additions and subtractions instead of 18 because some results of 
+these additions and subtractions are reused. We also used scheduling table 1, 
+therefore our implementation needs only two temporary matrices in each recursive call
+to store intermediate results.
 
 Strassen’s algorithm is recursive and it is working with quarters of input matrices.
 Because of that, it is useful to use z-ordering for storing matrices in our implementation.
 Its advantage is that all submatrices are stored in consecutive parts of memory.
 But we switch from Strassen’s algorithm to the simple matrix multiplication
-when the matrices are too small so the Strassen’s algorithm overhead is too big.
+when the matrices are too small so Strassen’s algorithm overhead is too big.
 For the simple matrix multiplication is better to have the matrices ordered row-wise.
-We combined both together and used the z-ordering down to the cutting point of recursion.
+We combined both and used the z-ordering down to the cutting point of recursion.
 We left the small submatrices which are multiplied with the simple multiplication algorithm
-in row-wise order.
+in row-wise order. %The reordering functions are implemented in TODO file.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=.2]{morton_order.png}}
@@ -158,11 +169,17 @@ in row-wise order.
 \label{fig}
 \end{figure}
 
-\subsection{Parallel Matrix Multiplication}
-We just parallelized the outermost loop of the simple matrix multiplication algorithm
-described in section 2.1.
-
 \subsection{Parallel Strassen Algorithm}
+
+It is straightforward to parallelize additions and subtractions in Strassen’s algorithm.
+The problem is that for small matrices it is not worth it to initialize a parallel region.
+Because of that, we can not just insert \texttt{\#pragma omp parallel for} before
+the addition and subtraction for-loop. 
+
+Then, we were thinking about parallelizing recursive calls -- calculate $P_1$ to $P_7$ in parallel.
+But since we are using only two temporary matrices in each recursive call, it is necessary to finish
+a recursive call before starting the next one. This may be solved using more space for intermediate
+results, but we did not try that.
 
 \section{Experiments}
 	
