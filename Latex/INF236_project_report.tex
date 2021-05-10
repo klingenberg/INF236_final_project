@@ -44,7 +44,7 @@
 Our goal was to implement parallel matrix multiplication.
 The standard algorithm has complexity $\mathcal{O}(n^3)$ and is straightforward
 to parallelize. We used its implementation as a reference. We compared
-it with Strassen’s algorithm, which has complexity $\mathcal{O}(n^{\log{}7})$
+it with Strassen's algorithm, which has complexity $\mathcal{O}(n^{\log{}7})$
 but is harder to implement.
 
 
@@ -53,12 +53,12 @@ but is harder to implement.
 In this section all the implemented algorithms are explained in further detail.
 
 \subsection{Matrix Multiplication}
-The standard $\mathcal{O}(n^3)$ algorithm is simple. Each element $cc_{ij}$ of 
-the resulting matrix is calculated as $c_{ij} =\sum^k a_{ik} \cdot b_{kj}$.
+The standard $\mathcal{O}(n^3)$ algorithm is simple. Each element $c_{ij}$ of 
+the resulting matrix $\mathbf{C}$ is calculated as $c_{ij} =\sum_k a_{ik} \cdot b_{kj}$.
 It is possible to implement the calculation with only three nested for-loops, but 
-matrices are stored row-wise, so it is better to access it in consecutive order.
+matrices are stored row-wise, so it is better to access it in consecutive order, in order to avoid cache misses.
 Because of that, we used the following implementation. Complexity is still $\mathcal{O}(n^3)$,
-but it runs faster.
+but in practice it runs faster than with three nested loops that are indexed in $kij$ order.
 
 \begin{algorithm}[H] 
 \caption{Matrix Multiplication}
@@ -91,31 +91,31 @@ described in previous section.
 
 The matrix multiplication can be formulated in terms of block matrices:
 $$
-A \cdot B =
+\mathbf{A} \cdot \mathbf{B} =
 \begin{pmatrix}
-A_{00} & A_{01} \\
-A_{10} & A_{11} 
+\mathbf{A}_{00} & \mathbf{A}_{01} \\
+\mathbf{A}_{10} & \mathbf{A}_{11} 
 \end{pmatrix}
 \cdot
 \begin{pmatrix}
-B_{00} & B_{01} \\
-B_{10} & B_{11} 
+\mathbf{B}_{00} & \mathbf{B}_{01} \\
+\mathbf{B}_{10} & \mathbf{B}_{11} 
 \end{pmatrix}
 =
 \begin{pmatrix}
-A_{00}B_{00}+A_{01}B_{10} & A_{00}B_{01}+A_{01}B_{11} \\
-A_{10}B_{00}+A_{11}B_{10} & A_{10}B_{01}+A_{01}B_{11} 
+\mathbf{A}_{00}\mathbf{B}_{00}+\mathbf{A}_{01}\mathbf{B}_{10} & \mathbf{A}_{00}\mathbf{B}_{01}+\mathbf{A}_{01}\mathbf{B}_{11} \\
+\mathbf{A}_{10}\mathbf{B}_{00}+\mathbf{A}_{11}\mathbf{B}_{10} & \mathbf{A}_{10}\mathbf{B}_{01}+\mathbf{A}_{11}\mathbf{B}_{11} 
 \end{pmatrix}
 =
 \begin{pmatrix}
-C_{00} & C_{01} \\
-C_{10} & C_{11} 
+\mathbf{C}_{00} & \mathbf{C}_{01} \\
+\mathbf{C}_{10} & \mathbf{C}_{11} 
 \end{pmatrix}
-= C
+= \mathbf{C}
 $$
 
 According to this formula, it needs 8 multiplications of half-size matrices. 
-The idea of Strassen’s algorithm is to use more additions and subtractions,
+The idea of Strassen's algorithm is to use more additions and subtractions,
 but only 7 multiplications half-size matrices. The algorithm is used recursively
 for these multiplications.
 
@@ -147,36 +147,48 @@ for these multiplications.
 \end{algorithmic}
 \end{algorithm}
 
-We used Winograd's version of Strassen’s algorithm described in \cite{boyer2009memory}.
+We used Winograd's version of Strassen's algorithm described in \cite{boyer2009memory}.
 It needs only 15 additions and subtractions instead of 18 because some results of 
 these additions and subtractions are reused. We also used scheduling table 1, 
 therefore our implementation needs only two temporary matrices in each recursive call
 to store intermediate results.
 
-Strassen’s algorithm is recursive and it is working with quarters of input matrices.
+Strassen's algorithm is recursive and it is working with quarters of input matrices.
 Because of that, it is useful to use z-ordering for storing matrices in our implementation.
-Its advantage is that all submatrices are stored in consecutive parts of memory.
-But we switch from Strassen’s algorithm to the simple matrix multiplication
-when the matrices are too small so Strassen’s algorithm overhead is too big.
+Its advantage is, that all submatrices are stored in consecutive parts of memory.
+But we switch from Strassen's algorithm to the simple matrix multiplication
+when the matrices are too small so Strassen's algorithm overhead is too big.
 For the simple matrix multiplication is better to have the matrices ordered row-wise.
 We combined both and used the z-ordering down to the cutting point of recursion.
 We left the small submatrices which are multiplied with the simple multiplication algorithm
 in row-wise order. %The reordering functions are implemented in TODO file.
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[scale=.2]{morton_order.png}}
-\caption{Z-layout}
+\centerline{\includegraphics[scale=.3]{z_ordering.pdf}}
+\caption{z-ordering diagram}
+\label{fig}
+\end{figure}
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[scale=.4]{partly_z_ordering.pdf}}
+\caption{z-ordering only for bigger submatrices}
+\label{fig}
+\end{figure}
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[scale=.3]{mem_ordering.pdf}}
+\caption{z-ordered matrix stored in memory}
 \label{fig}
 \end{figure}
 
 \subsection{Parallel Strassen Algorithm}
 
-It is straightforward to parallelize additions and subtractions in Strassen’s algorithm.
+It is straightforward to parallelize additions and subtractions in Strassen's algorithm.
 The problem is that for small matrices it is not worth it to initialize a parallel region.
 Because of that, we can not just insert \texttt{\#pragma omp parallel for} before
 the addition and subtraction for-loop. 
 
-Then, we were thinking about parallelizing recursive calls -- calculate $P_1$ to $P_7$ in parallel.
+Then, we were thinking about parallelizing recursive calls -- calculate $\mathbf{P}_1$ to $\mathbf{P}_7$ in parallel.
 But since we are using only two temporary matrices in each recursive call, it is necessary to finish
 a recursive call before starting the next one. This may be solved using more space for intermediate
 results, but we did not try that.
@@ -190,7 +202,7 @@ results, but we did not try that.
     ylabel={Speedup},
     xmin=1, xmax=512,
     ymin=0, ymax=4,
-    xtick={0,1,2,4,8,16,32,64,128,256,512},
+    xtick={0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512},
     ytick={0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4},
 	xmode=log,
     log basis x={2},
@@ -200,51 +212,19 @@ results, but we did not try that.
     grid style=dashed,
 ]
 
- \addplot[
-    color=gradient1,
-    mark=*,
-    only marks,
-    ]
-    coordinates {
-    % running time of normal sequential: 22.729855
-     (2, 0.8429769135)(4, 1.6839890956)(8, 2.5542670016)(16, 3.2968112104)(32, 3.7138089218)(64, 3.8177959134)(128, 3.556450524)(256, 2.8727691346)
-    };
-
- \addplot[
-    color=gradient2,
-    mark=*,
-    only marks,
-    ]
-    coordinates {
-    % running time of normal sequential: 1.397876
-     (2, 0.3643141647)(4, 0.7259570318)(8, 1.1082371204)(16, 1.4111962817)(32, 1.613661235)(64, 1.6513519133)(128, 1.5385655071)(256, 1.2147025062)
-    };
-
-\addplot[
-    color=gradient3,
-    mark=*,
-    only marks,
-    ]
-    coordinates {
-    % running time of normal sequential: 0.177942
-     (2, 0.3265631968)(4, 0.6516255667)(8, 0.9941393701)(16, 1.2717773521)(32, 1.4503146089)(64, 1.4886806659)(128, 1.3831910825)(256, 1.0765442556)
-    };
+	% running time of normal sequential: 22.729855
+	\addplot[color=gradient1, mark=*, only marks] table [x=cutoff, y=size1, col sep=comma] {cutoffs.csv};
+	% running time of normal sequential: 1.397876
+	\addplot[color=gradient2, mark=*, only marks] table [x=cutoff, y=size2, col sep=comma] {cutoffs.csv};
+	% running time of normal sequential: 0.177942
+	\addplot[color=gradient3, mark=*, only marks] table [x=cutoff, y=size3, col sep=comma] {cutoffs.csv};
+	% running time of normal sequential: 0.032513
+	\addplot[color=gradient4, mark=*, only marks] table [x=cutoff, y=size4, col sep=comma] {cutoffs.csv};
     
-    \addplot[
-    color=gradient4,
-    mark=*,
-    only marks,
-    ]
-    coordinates {
-    % running time of normal sequential: 0.032513
-     (2, 0.3625648174)(4, 0.6287808463)(8, 1.0997496956)(16, 1.350095507)(32, 1.3708154145)(64, 1.4456647399)(128, 1.2285623673)(256, 0.8052157115)
-    };
     \legend{2048 $\times$ 2048, 1024 $\times$ 1024, 512 $\times$ 512, 256 $\times$ 256}
-    
-    
-    
 \end{axis}
 \end{tikzpicture}
+
 
 \section{Conclusion}
 
