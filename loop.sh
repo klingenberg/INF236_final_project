@@ -18,7 +18,9 @@ do
             ex2=0
         fi
         echo -n "$counter2, $i, "
+        echo -n "$counter2, $i, " >>result.txt
         ./driver $counter2 $ex1 $ex2 1 1 1
+        ./driver $counter2 $ex1 $ex2 1 1 1 >>result.txt
     done
     counter2=$(( $counter2 * 2 ))
 done
