@@ -17,7 +17,7 @@ do
             ex1=0
             ex2=0
         fi
-        echo $counter2 $i $ex1 $ex2 1 1 1
+        echo -n "$counter2, $i, "
         ./driver $counter2 $ex1 $ex2 1 1 1
     done
     counter2=$(( $counter2 * 2 ))
