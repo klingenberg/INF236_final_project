@@ -170,7 +170,7 @@ Because of that, it is useful to use some recursive ordering for storing matrice
 If the dimension of the input matrices is not a power of two, the input matrices are zero-padded to a size of the next larger power of two.
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[scale=.3]{z_ordering.pdf}}
+\centerline{\includegraphics[scale=.202]{z_ordering.pdf}}
 \caption{z-ordering diagram}
 \label{z_diagram}
 \end{figure}
@@ -269,7 +269,7 @@ However, it is in practice faster to stop the recursion at a higher level, becau
 	% running time of normal sequential: 0.032513
 	\addplot[color=gradient4, mark=*, only marks] table [x=cutoff, y=size4, col sep=comma] {cutoffs.csv};
 
-    \legend{2048 $\times$ 2048, 1024 $\times$ 1024, 512 $\times$ 512, 256 $\times$ 256}
+    \legend{2048$\times$2048, 1024$\times$1024, 512$\times$512, 256$\times$256}
 \end{axis}
 \end{tikzpicture}
 \caption{Sequential Strassen's algorithm with different values for the cutoff level}
@@ -279,7 +279,7 @@ However, it is in practice faster to stop the recursion at a higher level, becau
 \subsection{Comparison of parallel matrix multiplication and parallel Strassen's algorithm to the
 sequential Strassen's algorithm with different amount of threads}
 
-Next, we compared all parallel algorithms using different amount of threads. The submatrix dimension at the cutoff level was 32 $\times$ 32, which is not optimal 
+Next, we compared all parallel algorithms using different amount of threads. The submatrix dimension at the cutoff level was 32$\times$32, which is not optimal 
 
 
 
@@ -311,7 +311,7 @@ Next, we compared all parallel algorithms using different amount of threads. The
 
 \end{axis}
 \end{tikzpicture}
-\caption{Comparing different variants of Strassen's algorithm with matrix size 256 $\times$ 256}
+\caption{Comparing different variants of Strassen's algorithm with matrix size 256$\times$256}
 \label{fig:strassen_cmp_256}
 \end{figure}
 
@@ -320,7 +320,7 @@ Next, we compared all parallel algorithms using different amount of threads. The
 \center
 \begin{tikzpicture}
 \begin{axis}[
-    title={Matrices size 512 $\times$ 512},
+    title={Matrices size 512$\times$512},
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
@@ -345,7 +345,7 @@ Next, we compared all parallel algorithms using different amount of threads. The
 
 \end{axis}
 \end{tikzpicture}
-\caption{Comparing different variants of Strassen's algorithm with matrix size 512 $\times$ 512}
+\caption{Comparing different variants of Strassen's algorithm with matrix size 512$\times$512}
 \label{fig:strassen_cmp_512}
 \end{figure}
 
@@ -354,7 +354,7 @@ Next, we compared all parallel algorithms using different amount of threads. The
 \center
 \begin{tikzpicture}
 \begin{axis}[
-    title={Matrices size 1024 $\times$ 1024},
+    title={Matrices size 1024$\times$1024},
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
@@ -378,16 +378,19 @@ Next, we compared all parallel algorithms using different amount of threads. The
     \legend{parallel matmul, parallel 2 layers Strassen, parallel recursive Strassen}
 \end{axis}
 \end{tikzpicture}
-\caption{Comparing different variants of Strassen's algorithm with matrix size 1024 $\times$ 1024}
+\caption{Comparing different variants of Strassen's algorithm with matrix size 1024$\times$1024}
 \label{fig:strassen_cmp_1024}
 \end{figure}
 
+For matrices of size 2048$\times$2048, it can be seen that the performace of parallel Strassen's
+algorithm is same for 2-layers version and cutoff 512 version, because there are two Strassen's
+levels in both of them.
 % Compare different number of threads for 2048x2048
 \begin{figure}[h!]
 \center
 \begin{tikzpicture}
 \begin{axis}[
-    title={Matrices size 2048 $\times$ 2048},
+    title={Matrices size 2048$\times$2048},
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
@@ -412,7 +415,7 @@ Next, we compared all parallel algorithms using different amount of threads. The
 
 \end{axis}
 \end{tikzpicture}
-\caption{Comparing different variants of Strassen's algorithm with matrix size 2048 $\times$ 2048}
+\caption{Comparing different variants of Strassen's algorithm with matrix size 2048$\times$2048}
 \label{fig:strassen_cmp_2048}
 \end{figure}
 
@@ -421,7 +424,7 @@ Next, we compared all parallel algorithms using different amount of threads. The
 \center
 \begin{tikzpicture}
 \begin{axis}[
-    title={Matrices size 4096 $\times$ 4096},
+    title={Matrices size 4096$\times$4096},
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
@@ -446,16 +449,19 @@ Next, we compared all parallel algorithms using different amount of threads. The
 
 \end{axis}
 \end{tikzpicture}
-\caption{Comparing different variants of Strassen's algorithm with matrix size 4096 $\times$ 4096}
+\caption{Comparing different variants of Strassen's algorithm with matrix size 4096$\times$4096}
 \label{fig:strassen_cmp_4096}
 \end{figure}
 
+For bigger matrices, the speedup for 2-layers parallel Strassen's algorithm is closer and closer
+to parallel matrix multiplication running time, because the parallel matrix multiplication running time
+dominates here.
 % Compare different number of threads for 8192x8192
 \begin{figure}[h!]
 \center
 \begin{tikzpicture}
 \begin{axis}[
-    title={Matrices size 8192 $\times$ 8192},
+    title={Matrices size 8192$\times$8192},
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
@@ -480,7 +486,7 @@ Next, we compared all parallel algorithms using different amount of threads. The
     
 \end{axis}
 \end{tikzpicture}
-\caption{Comparing different variants of Strassen's algorithm with matrix size 8192 $\times$ 8192}
+\caption{Comparing different variants of Strassen's algorithm with matrix size 8192$\times$8192}
 \label{fig:strassen_cmp_8192}
 \end{figure}
 
@@ -491,7 +497,7 @@ Next, we compared all parallel algorithms using different amount of threads. The
 \center
 \begin{tikzpicture}
 \begin{semilogyaxis}[
-    title={Matrices size 8192 $\times$ 8192},
+    title={Matrices size 8192$\times$8192},
     xlabel={\#threads},
     ylabel={running time in seconds},
     xmin=0, xmax=8,
