@@ -243,11 +243,11 @@ results, but we did not try that.
     grid style=dashed,
 ]
 
-	% normal strassen
+	
 	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result256.csv};
-	% parallel matmul
+	
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result256.csv};
-	% parallel strassen
+	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result256.csv};
     
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
@@ -271,11 +271,11 @@ results, but we did not try that.
     grid style=dashed,
 ]
 
-	% normal strassen
+	
 	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result512.csv};
-	% parallel matmul
+	
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result512.csv};
-	% parallel strassen
+	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result512.csv};
     
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
@@ -300,11 +300,11 @@ results, but we did not try that.
     grid style=dashed,
 ]
 
-	% normal strassen
+	
 	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result1024.csv};
-	% parallel matmul
+	
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result1024.csv};
-	% parallel strassen
+	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result1024.csv};
     
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
@@ -328,11 +328,11 @@ results, but we did not try that.
     grid style=dashed,
 ]
 
-	% normal strassen
+	
 	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result2048.csv};
-	% parallel matmul
+	
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result2048.csv};
-	% parallel strassen
+	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result2048.csv};
     
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
@@ -356,11 +356,11 @@ results, but we did not try that.
     grid style=dashed,
 ]
 
-	% normal strassen
+	
 	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result4096.csv};
-	% parallel matmul
+	
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result4096.csv};
-	% parallel strassen
+	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result4096.csv};
     
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
@@ -384,11 +384,11 @@ results, but we did not try that.
     grid style=dashed,
 ]
 
-	% normal strassen
+	
 	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result8192.csv};
-	% parallel matmul
+	
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result8192.csv};
-	% parallel strassen
+	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result8192.csv};
     
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
@@ -413,14 +413,13 @@ results, but we did not try that.
 ]
 
     \addplot[color=gradient0, mark=*] table [x=config, y=simple, col sep=comma] {result8192.csv};
-	% parallel matmul
+	
 	\addplot[color=gradient1, mark=*] table [x=config, y=strassen, col sep=comma] {result8192.csv};
-
-	% normal strassen
+	
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=simple_parallel, col sep=comma] {result8192.csv};
-	% parallel matmul
+	
 	\addplot[color=gradient3, mark=*, only marks] table [x=config, y=strassen_2layers, col sep=comma] {result8192.csv};
-	% parallel strassen
+	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_recursive, col sep=comma] {result8192.csv};
     
     \legend{matmul, strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
