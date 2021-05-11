@@ -212,7 +212,7 @@ But since we are using only two temporary matrices in each recursive call, it is
 a recursive call before starting the next one. This may be solved using more space for intermediate
 results, but we did not try that.
 
-We decided to try some number of recursive steps and then switch to the parallelized simple matrix multiplication.
+We decided to perform some number of recursive steps of the Strassen algorithm and then switch to the parallelized simple matrix multiplication.
 
 \subsubsection{2-layers parallel Strassen's algorithm}
 
@@ -286,10 +286,11 @@ In the following experiments, the submatrix dimension used at the cutoff level w
 Before we ran our tests, this variant showed the fastest speedup, which is why we used this configuration.
 As we were experimenting later with several different dimensions at the cutoff level, a dimension of 64$\times$64 was achieving even higher speedup.
 In figure \ref{fig:cutoff_levels}, the difference in the speedup of the both dimensions at the cutoff
-level is not that large, so we did not recompute our results (also because it takes a very long time to execute several runs of the algorithms). \\
-\\
+level is not that large, so we did not recompute our results (also because it takes a very long time to execute several runs of the algorithms). 
+
 We ran this experiment for the following matrix sizes: \\
-$\{ 256 \times 256, 512 \times 512, 1024 \times 1024, 2048 \times 2048, 4096 \times 4096, 8192 \times 8192 \}$ \\
+$$\{ 256 \times 256, 512 \times 512, 1024 \times 1024, 2048 \times 2048, 4096 \times 4096, 8192 \times 8192 \}$$
+
 The results are shown in the figures \ref{fig:strassen_cmp_256}, \ref{fig:strassen_cmp_512}, \ref{fig:strassen_cmp_1024}, \ref{fig:strassen_cmp_2048}, \ref{fig:strassen_cmp_4096} and \ref{fig:strassen_cmp_8192}
 
 % Compare different number of threads for 256x256
@@ -358,6 +359,7 @@ The results are shown in the figures \ref{fig:strassen_cmp_256}, \ref{fig:strass
 \subcaption{Comparing different variants of Strassen's algorithm with matrix size 512$\times$512}
 \label{fig:strassen_cmp_512}
 \end{subfigure}
+\caption{}
 \end{figure}
 
 For matrices of size 2048$\times$2048, it can be seen that the performace of parallel Strassen's
@@ -428,6 +430,7 @@ levels in both of them.
 \caption{Comparing different variants of Strassen's algorithm with matrix size 2048$\times$2048}
 \label{fig:strassen_cmp_2048}
 \end{subfigure}
+\caption{}
 \end{figure}
 
 For bigger matrices, the speedup for 2-layers parallel Strassen's algorithm is closer and closer
@@ -499,14 +502,17 @@ dominates here.
 \subcaption{Comparing different variants of Strassen's algorithm with matrix size 8192$\times$8192}
 \label{fig:strassen_cmp_8192}
 \end{subfigure}
+\caption{}
 \end{figure}
+
+\newpage
 
 \subsection{Running times for all implemented algorithms and different numbers of threads}
 
-Figure \ref{fig:running_times_threads} shows that for parallel Strassen's algorithm with cutoff 512 is optimal
-to use 40 threads. With more threads, the code is slower again. Unlike that simple parallel
-matrix multiplication is faster with 60 threads than with 40.
-
+After that, we compared all algorithms with different amount of threads on only one matrix size (8192$\times$8192).
+Figure \ref{fig:running_times_threads} shows, that for parallel Strassen's algorithm with cutoff 512, it is optimal
+to use 40 threads. With more threads, the code is slower again. 
+Unlike simple parallel matrix multiplication, which is faster with 60 threads than with 40.
 
 % Running time for 8192
 \begin{figure}[h!]
@@ -543,17 +549,28 @@ matrix multiplication is faster with 60 threads than with 40.
 \label{fig:running_times_threads}
 \end{figure}
 
+\newpage
 \subsection{All implemented algorithms for different sizes of matrices}
 
+Finally, we compared all the algorithms for different matrix sizes, also with sizes between powers of two. This can be clearly seen, as all Strassen variants have a large running time deviation right before the matrix dimension reaches 4096, while the other algorithms have a smooth trend, as they are not using the zero-padding. 
+
+In figure \ref{fig:runtime_cmp} the running time of all algorithms is plotted logarithmically, since the running time is increasing very quickly with respect to the matrix size. For most matrix sizes the parallel variants of the Strassen algorithm are running faster than the standard parallel matrix multiplication algorithm. Also, the parallel 2-layers Strassen algorithm performs strictly slower than the parallel recursive variant. 
+
+In figure \ref{fig:speedup_cmp} we compare the speedup with respect to the standard non-parallel matrix multiplication algorithm. 
+
+
+
+
 \begin{figure}[h!]
-\center
+\centering
+\begin{subfigure}{.49\textwidth}
+\centering
 \begin{tikzpicture}
 \begin{semilogyaxis}[
-    title={Running time with 40 threads},
     xlabel={matrix size},
     ylabel={running time in seconds},
     ymin=0, ymax=400,
-    legend pos=outer north east,
+    legend style={at={(0.5,-0.2)},anchor=north},
     xmajorgrids=true,
     ymajorgrids=true,
     grid style=dashed,
@@ -569,21 +586,20 @@ matrix multiplication is faster with 60 threads than with 40.
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=size, y=strassen_recursive, col sep=comma] {results_diff_size.csv};
     
-    \legend{matmul, strassen, parallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+    \legend{matmul, Strassen, parallel matmul, parallel 2 layers Strassen, parallel recursive Strassen }
 \end{semilogyaxis}
 \end{tikzpicture}
-
-\end{figure}
-
-\begin{figure}[h!]
-\center
+\subcaption{Running time with 40 threads}
+\label{fig:runtime_cmp}
+\end{subfigure}
+\begin{subfigure}{.49\textwidth}
+\centering
 \begin{tikzpicture}
 \begin{axis}[
-    title={Speedup with respect to simple matrix multiplication},
     xlabel={matrix size},
-    ylabel={running time in seconds},
+    ylabel={speedup},
     ymin=0, ymax=65,
-    legend pos=outer north east,
+    legend style={at={(0.5,-0.275)},anchor=north},
     xmajorgrids=true,
     ymajorgrids=true,
     grid style=dashed,
@@ -597,13 +613,20 @@ matrix multiplication is faster with 60 threads than with 40.
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=size, y=speedup_strassen_recursive, col sep=comma] {results_diff_size.csv};
     
-    \legend{strassen, parallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+    \legend{Strassen, parallel matmul, parallel 2 layers Strassen, parallel recursive Strassen }
 \end{axis}
 \end{tikzpicture}
-
+\subcaption{Speedup with respect to simple matrix multiplication}
+\label{fig:speedup_cmp}
+\end{subfigure}
+\caption{}
 \end{figure}
 
+
 \section{Conclusion}
+
+
+
 
 \printbibliography
 
