@@ -66,7 +66,7 @@ but requires more memory management.
 \end{itemize}
 
 \section{Algorithms}
-In this section, all the implemented algorithms are explained in further detail.
+In this section, all the implemented algorithms are explained in further detail. Our implementation is restricted to square matrices as input, but the algorithms could be modified to also work with non-square matrices.
 
 \subsection{Matrix multiplication}
 The standard $\mathcal{O}(n^3)$ algorithm is simple: Each element $c_{ij}$ of 
@@ -184,7 +184,7 @@ If the dimension of the input matrices is not a power of two, the input matrices
 \end{figure}
 
 Its advantage is, that all submatrices are stored in consecutive parts of the memory.
-However, there is a switch from Strassen's algorithm to the simple matrix multiplication algorithm,
+However, we switch from Strassen's algorithm to the simple matrix multiplication algorithm,
 since the overhead of Strassen's algorithm is getting too big for smaller matrix sizes.
 For the simple matrix multiplication it is better to have the matrices ordered row-wise.
 In our implementation, we combined both z-ordering and usual row-by-row ordering.
@@ -203,16 +203,16 @@ and back are implemented in \texttt{z\_order.c} file.
 \subsection{Parallel Strassen's algorithm}
 
 It is straightforward to parallelize additions and subtractions in Strassen's algorithm.
-The problem is that for small matrices it is not worth it to initialize a parallel region.
-Because of that, we can not just insert \texttt{\#pragma omp parallel for} before
-the addition and subtraction for-loop. 
+The problem is, that for small matrices it is not worth it to initialize a parallel region.
+Because of that, we can not just insert a \texttt{\#pragma omp parallel for} construct before
+the addition and subtraction for-loop.
 
-Then, we were thinking about parallelizing recursive calls -- calculate $\mathbf{P}_1$ to $\mathbf{P}_7$ in parallel.
+Then, we were thinking about parallelizing recursive calls -- calculate $\mathbf{P}_1, \ldots, \mathbf{P}_7$ in parallel.
 But since we are using only two temporary matrices in each recursive call, it is necessary to finish
 a recursive call before starting the next one. This may be solved using more space for intermediate
 results, but we did not try that.
 
-We decided to try some number of recursive steps and than switch to the parallelized simple multiplication.
+We decided to try some number of recursive steps and then switch to the parallelized simple matrix multiplication.
 
 \subsubsection{2-layers parallel Strassen's algorithm}
 
@@ -222,26 +222,30 @@ parallel regions initialized for additions and subtractions in level 1 and only 
 all additions, subtractions and multiplications in level 2.
 
 \subsubsection{Recursive parallel Strassen's algorithm with matrix size cutoff}
-After some measurements with 2-layers parallel Strassen's algorithm, we implemented this version.
-The idea is same, but there are more recursive calls of Strassen's algorithm with parallelized
-additions and subtractions (similar to \texttt{parallel\_strassen\_level\_1}). When is reached
-cutoff matrix size, it is switched to the parallelized simple multiplication. We tried some cutoffs
-and we think that the best one is 512$\times$512.
+After some measurements with 2-layers parallel Strassen's algorithm, we implemented this variant.
+The idea is the same, but there are more recursive calls of Strassen's algorithm with parallelized
+additions and subtractions (similar to \texttt{parallel\_strassen\_level\_1}). 
+When the cutoff matrix size is reached, we switch to the parallelized simple matrix multiplication. We tried several cutoff sizes
+and a cutoff size of 512$\times$512 was the most promising one.
 
 Since there are at least two layers of Strassen's algorithm and we set the cutoff to 512$\times$512,
-we need to solve cases when the matrices are smaller than 2048$\times$2048. We use only the
-the parallelized simple multiplication in these cases.
+we need to solve cases when the matrices are smaller than 2048$\times$2048. In these cases, we only use the 
+parallelized simple matrix multiplication.
 
 \section{Experiments}
 
-We run all tests on brake.ii.uib.no machine.
+We ran all the experiments on the machine available at \texttt{brake.ii.uib.no}.
 
 \subsection{Sequential Strassen's algorithm}
+
+Strassen's algorithm theoretically runs recursively until submatrices reach dimension 1, such that the matrix multiplication just becomes a multiplication of two scalars.
+However, it is in practice faster to stop the recursion at a higher level, because for smaller matrix sizes, Strassen's algorithm performs worse than the standard matrix multiplication algorithm. Therefore, we experimented with different cutoff levels for different matrix sizes. The results can be seen in figure \ref{fig:cutoff_levels}.
+
 	
 % Comparing different cutoff levels of sequential Strassen
+\begin{figure}[h!]
 \begin{tikzpicture}
 \begin{axis}[
-    title={Sequential Strassen's algorithm with different values for the cutoff level},
     xlabel={cuttoff},
     ylabel={speedup},
     xmin=1, xmax=512,
@@ -265,14 +269,21 @@ We run all tests on brake.ii.uib.no machine.
 	\addplot[color=gradient3, mark=*, only marks] table [x=cutoff, y=size3, col sep=comma] {cutoffs.csv};
 	% running time of normal sequential: 0.032513
 	\addplot[color=gradient4, mark=*, only marks] table [x=cutoff, y=size4, col sep=comma] {cutoffs.csv};
-    
+
     \legend{2048 $\times$ 2048, 1024 $\times$ 1024, 512 $\times$ 512, 256 $\times$ 256}
 \end{axis}
 \end{tikzpicture}
+\caption{Sequential Strassen's algorithm with different values for the cutoff level}
+\label{fig:cutoff_levels}
+\end{figure}
 
 \subsection{Comparison of parallel matrix multiplication and parallel Strassen's algorithm to the
 sequential Strassen's algorithm with different amount of threads}
+
+
+
 % Compare different number of threads for 256x256
+\begin{figure}[h!]
 \begin{tikzpicture}
 \begin{axis}[
     title={Matrices size 256 $\times$ 256},
@@ -288,7 +299,6 @@ sequential Strassen's algorithm with different amount of threads}
     ymajorgrids=true,
     grid style=dashed,
 ]
-
 	
 	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result256.csv};
 	
@@ -299,8 +309,10 @@ sequential Strassen's algorithm with different amount of threads}
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{axis}
 \end{tikzpicture}
+\end{figure}
 
 % Compare different number of threads for 512x512
+\begin{figure}[h!]
 \begin{tikzpicture}
 \begin{axis}[
     title={Matrices size 512 $\times$ 512},
@@ -328,8 +340,10 @@ sequential Strassen's algorithm with different amount of threads}
 
 \end{axis}
 \end{tikzpicture}
+\end{figure}
 
 % Compare different number of threads for 1024x1024
+\begin{figure}[h!]
 \begin{tikzpicture}
 \begin{axis}[
     title={Matrices size 1024 $\times$ 1024},
@@ -356,8 +370,10 @@ sequential Strassen's algorithm with different amount of threads}
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{axis}
 \end{tikzpicture}
+\end{figure}
 
 % Compare different number of threads for 2048x2048
+\begin{figure}[h!]
 \begin{tikzpicture}
 \begin{axis}[
     title={Matrices size 2048 $\times$ 2048},
@@ -384,8 +400,10 @@ sequential Strassen's algorithm with different amount of threads}
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{axis}
 \end{tikzpicture}
+\end{figure}
 
 % Compare different number of threads for 4096x4096
+\begin{figure}[h!]
 \begin{tikzpicture}
 \begin{axis}[
     title={Matrices size 4096 $\times$ 4096},
@@ -412,8 +430,10 @@ sequential Strassen's algorithm with different amount of threads}
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{axis}
 \end{tikzpicture}
+\end{figure}
 
 % Compare different number of threads for 8192x8192
+\begin{figure}[h!]
 \begin{tikzpicture}
 \begin{axis}[
     title={Matrices size 8192 $\times$ 8192},
@@ -440,9 +460,12 @@ sequential Strassen's algorithm with different amount of threads}
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{axis}
 \end{tikzpicture}
+\end{figure}
 
 \subsection{Running times for all implemeted algorithms and different numbers of threads}
+
 % Running time for 8192
+\begin{figure}[h!]
 \begin{tikzpicture}
 \begin{semilogyaxis}[
     title={Matrices size 8192 $\times$ 8192},
@@ -471,9 +494,11 @@ sequential Strassen's algorithm with different amount of threads}
     \legend{matmul, strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{semilogyaxis}
 \end{tikzpicture}
+\end{figure}
 
 \subsection{All implemeted algorithms for different sizes of matrices}
 
+\begin{figure}[h!]
 \begin{tikzpicture}
 \begin{semilogyaxis}[
     title={Running time with 40 threads},
@@ -499,7 +524,9 @@ sequential Strassen's algorithm with different amount of threads}
     \legend{matmul, strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{semilogyaxis}
 \end{tikzpicture}
+\end{figure}
 
+\begin{figure}[h!]
 \begin{tikzpicture}
 \begin{axis}[
     title={Speedup with respect to simple matrix multiplication},
@@ -523,6 +550,7 @@ sequential Strassen's algorithm with different amount of threads}
     \legend{strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{axis}
 \end{tikzpicture}
+\end{figure}
 
 \section{Conclusion}
 
