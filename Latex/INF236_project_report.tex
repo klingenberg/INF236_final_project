@@ -244,6 +244,7 @@ However, it is in practice faster to stop the recursion at a higher level, becau
 	
 % Comparing different cutoff levels of sequential Strassen
 \begin{figure}[h!]
+\center
 \begin{tikzpicture}
 \begin{axis}[
     xlabel={submatrix dimension at cuttoff},
@@ -284,6 +285,7 @@ sequential Strassen's algorithm with different amount of threads}
 
 % Compare different number of threads for 256x256
 \begin{figure}[h!]
+\center
 \begin{tikzpicture}
 \begin{axis}[
     title={Matrices size 256 $\times$ 256},
@@ -314,6 +316,7 @@ sequential Strassen's algorithm with different amount of threads}
 
 % Compare different number of threads for 512x512
 \begin{figure}[h!]
+\center
 \begin{tikzpicture}
 \begin{axis}[
     title={Matrices size 512 $\times$ 512},
@@ -345,6 +348,7 @@ sequential Strassen's algorithm with different amount of threads}
 
 % Compare different number of threads for 1024x1024
 \begin{figure}[h!]
+\center
 \begin{tikzpicture}
 \begin{axis}[
     title={Matrices size 1024 $\times$ 1024},
@@ -375,6 +379,7 @@ sequential Strassen's algorithm with different amount of threads}
 
 % Compare different number of threads for 2048x2048
 \begin{figure}[h!]
+\center
 \begin{tikzpicture}
 \begin{axis}[
     title={Matrices size 2048 $\times$ 2048},
@@ -405,6 +410,7 @@ sequential Strassen's algorithm with different amount of threads}
 
 % Compare different number of threads for 4096x4096
 \begin{figure}[h!]
+\center
 \begin{tikzpicture}
 \begin{axis}[
     title={Matrices size 4096 $\times$ 4096},
@@ -435,6 +441,7 @@ sequential Strassen's algorithm with different amount of threads}
 
 % Compare different number of threads for 8192x8192
 \begin{figure}[h!]
+\center
 \begin{tikzpicture}
 \begin{axis}[
     title={Matrices size 8192 $\times$ 8192},
@@ -467,6 +474,7 @@ sequential Strassen's algorithm with different amount of threads}
 
 % Running time for 8192
 \begin{figure}[h!]
+\center
 \begin{tikzpicture}
 \begin{semilogyaxis}[
     title={Matrices size 8192 $\times$ 8192},
@@ -500,6 +508,7 @@ sequential Strassen's algorithm with different amount of threads}
 \subsection{All implemented algorithms for different sizes of matrices}
 
 \begin{figure}[h!]
+\center
 \begin{tikzpicture}
 \begin{semilogyaxis}[
     title={Running time with 40 threads},
@@ -528,12 +537,13 @@ sequential Strassen's algorithm with different amount of threads}
 \end{figure}
 
 \begin{figure}[h!]
+\center
 \begin{tikzpicture}
 \begin{axis}[
     title={Speedup with respect to simple matrix multiplication},
     xlabel={matrix size},
     ylabel={running time in seconds},
-    ymin=0, ymax=60,
+    ymin=0, ymax=65,
     legend pos=outer north east,
     xmajorgrids=true,
     ymajorgrids=true,
