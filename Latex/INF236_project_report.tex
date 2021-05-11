@@ -74,7 +74,7 @@ the resulting matrix $\mathbf{C}$ is calculated as $c_{ij} =\sum_k a_{ik} \cdot 
 It is possible to implement the calculation with only three nested for-loops. But 
 matrices are stored row-wise, so it is better to access it in consecutive order, in order to avoid cache misses.
 Because of that, we used the following implementation. Complexity is still $\mathcal{O}(n^3)$,
-but in practice it runs faster than with three nested loops that are indexed in $kij$ order. %why kij?
+but in practice it runs faster than with three nested loops that are indexed in $kij$ order.
 
 \begin{algorithm}[H] 
 \caption{matrix multiplication}
@@ -172,7 +172,7 @@ to store intermediate results.
 
 Strassen's algorithm is recursive and it is working with quarters of input matrices.
 Because of that, it is useful to use some recursive ordering for storing matrices in memory,
-for example z-ordering \ref{z_diagram}, \ref{z_mem}.
+for example z-ordering (figures \ref{z_diagram}, \ref{z_mem}).
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=.3]{z_ordering.pdf}}
@@ -193,8 +193,8 @@ For the simple matrix multiplication is better to have the matrices ordered row-
 In our implementation, we combined both z-ordering and usual row-by-row ordering.
 We used the z-ordering for bigger submatrices, but
 we left the small submatrices which are multiplied with the simple multiplication algorithm
-in row-wise order \ref{z_partly}. Functions for reordering matrices to this layout and back are implemented
-in \texttt{z\_order.c} file.
+in row-wise order (figure \ref{z_partly}). Functions for reordering matrices to this layout
+and back are implemented in \texttt{z\_order.c} file.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=.5]{partly_z_ordering.pdf}}
@@ -203,7 +203,7 @@ in \texttt{z\_order.c} file.
 \end{figure}
 
 
-\subsection{Parallel Strassen Algorithm}
+\subsection{Parallel Strassen's algorithm}
 
 It is straightforward to parallelize additions and subtractions in Strassen's algorithm.
 The problem is that for small matrices it is not worth it to initialize a parallel region.
@@ -215,7 +215,29 @@ But since we are using only two temporary matrices in each recursive call, it is
 a recursive call before starting the next one. This may be solved using more space for intermediate
 results, but we did not try that.
 
+We decided to try some number of recursive steps and than switch to the parallelized simple multiplication.
+
+\subsubsection{2-layers parallel Strassen's algorithm}
+
+This implementation uses two levels of Strassen's algorithm (hardcoded as functions 
+\texttt{parallel\_strassen\_level\_1} and \texttt{parallel\_strassen\_level\_2}). There are seven
+parallel regions initialized for additions and subtractions in level 1 and only one for 
+all additions, subtractions and multiplications in level 2.
+
+\subsubsection{Recursive parallel Strassen's algorithm with matrix size cutoff}
+After some measurements with 2-layers parallel Strassen's algorithm, we implemented this version.
+The idea is same, but there are more recursive calls of Strassen's algorithm with parallelized
+additions and subtractions (similar to \texttt{parallel\_strassen\_level\_1}). When is reached
+cutoff matrix size, it is switched to the parallelized simple multiplication. We tried some cutoffs
+and we think that the best one is 512$\times$512.
+
+Since there are at least two layers of Strassen's algorithm and we set the cutoff to 512$\times$512,
+we need to solve cases when the matrices are smaller than 2048$\times$2048. We use only the
+the parallelized simple multiplication in these cases.
+
 \section{Experiments}
+
+We run all tests on brake.ii.uib.no machine.
 
 \subsection{Sequential Strassen's algorithm}
 	
