@@ -279,7 +279,13 @@ However, it is in practice faster to stop the recursion at a higher level, becau
 \subsection{Comparison of parallel matrix multiplication and parallel Strassen's algorithm to the
 sequential Strassen's algorithm with different amount of threads}
 
-Next, we compared all parallel algorithms using different amount of threads. The submatrix dimension at the cutoff level was 32$\times$32, which is not optimal 
+Next, we compared all parallel algorithms with the non-parallel version of Strassen using different amount of threads. 
+In the following experiments, the submatrix dimension used at the cutoff level was of dimension 32 $\times$ 32, which is not optimal, as shown before. 
+Before we ran our tests, this variant showed the fastest speedup, which is why we used this configuration.
+As we were experimenting later with several different dimensions at the cutoff level, a dimension of 64 $ \times $ 64 was achieving even higher speedup.
+In figure \ref{fig:cutoff_levels}, the difference in the speedup of the both dimensions at the cutoff level is not that large, so we did not recompute
+our results (also because it takes a very long time to execute several runs of the algorithms). With
+an optimal submatrix dimension size of 64 $\times$ 64, it would be possible to achieve even more speedup.
 
 
 
