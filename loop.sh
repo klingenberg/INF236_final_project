@@ -5,7 +5,7 @@ declare -a threads=( 1 2 5 10 20 40 60 )
 
 counter2=256
 
-while [ $counter2 -le 8192 ]
+while [ $counter2 -le 256 ]
 do
     for i in "${threads[@]}"
     do
@@ -17,10 +17,10 @@ do
             ex1=0
             ex2=0
         fi
-        echo -n "$counter2, $i, "
+        echo -n "$counter2, $i"
         echo -n "$counter2, $i, " >>result.txt
-        ./driver $counter2 $ex1 $ex2 1 1 1
         ./driver $counter2 $ex1 $ex2 1 1 1 >>result.txt
+	echo " done"
     done
     counter2=$(( $counter2 * 2 ))
 done

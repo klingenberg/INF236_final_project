@@ -8,7 +8,7 @@
 #define true  1
 #define false 0
 
-#define n_runs 7
+#define n_runs 3
 
 double ** allocate_matrix(int dim, double *ptr);
 int z_order_lookup(int x, int y);
