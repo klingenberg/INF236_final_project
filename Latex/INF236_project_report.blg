@@ -1,0 +1,18 @@
+[0] Config.pm:304> INFO - This is Biber 2.14
+[1] Config.pm:307> INFO - Logfile is 'INF236_project_report.blg'
+[90] biber-darwin:322> INFO - === Tue May 11, 2021, 22:19:35
+[106] Biber.pm:415> INFO - Reading 'INF236_project_report.bcf'
+[207] Biber.pm:943> INFO - Found 1 citekeys in bib section 0
+[220] Biber.pm:4256> INFO - Processing section 0
+[220] Utils.pm:75> INFO - Globbing data source 'citations.bib'
+[220] Utils.pm:91> INFO - Globbed data source 'citations.bib' to citations.bib
+[230] Biber.pm:4455> INFO - Looking for bibtex format file 'citations.bib' for section 0
+[230] Utils.pm:304> WARN - Data source 'citations.bib' is empty, ignoring
+[230] Utils.pm:304> WARN - I didn't find a database entry for 'boyer2009memory' (section 0)
+[235] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[235] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[235] Biber.pm:4084> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
+[235] Biber.pm:4090> INFO - No sort tailoring available for locale 'en-US'
+[236] bbl.pm:652> INFO - Writing 'INF236_project_report.bbl' with encoding 'UTF-8'
+[236] bbl.pm:755> INFO - Output to INF236_project_report.bbl
+[236] Biber.pm:128> INFO - WARNINGS: 2
