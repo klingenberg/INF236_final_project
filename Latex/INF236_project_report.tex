@@ -308,7 +308,7 @@ sequential Strassen's algorithm with different amount of threads}
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result256.csv};
     
-    \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+    \legend{parallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{axis}
 \end{tikzpicture}
 \end{figure}
@@ -339,7 +339,7 @@ sequential Strassen's algorithm with different amount of threads}
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result512.csv};
     
-    \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+    \legend{parallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 
 \end{axis}
 \end{tikzpicture}
@@ -371,7 +371,7 @@ sequential Strassen's algorithm with different amount of threads}
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result1024.csv};
     
-    \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+    \legend{parallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{axis}
 \end{tikzpicture}
 \end{figure}
@@ -402,7 +402,7 @@ sequential Strassen's algorithm with different amount of threads}
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result2048.csv};
     
-    \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+    \legend{parallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{axis}
 \end{tikzpicture}
 \end{figure}
@@ -433,7 +433,7 @@ sequential Strassen's algorithm with different amount of threads}
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result4096.csv};
     
-    \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+    \legend{parallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{axis}
 \end{tikzpicture}
 \end{figure}
@@ -464,7 +464,7 @@ sequential Strassen's algorithm with different amount of threads}
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result8192.csv};
     
-    \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+    \legend{parallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{axis}
 \end{tikzpicture}
 \end{figure}
@@ -499,7 +499,7 @@ sequential Strassen's algorithm with different amount of threads}
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_recursive, col sep=comma] {result8192.csv};
     
-    \legend{matmul, strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+    \legend{matmul, strassen, parallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{semilogyaxis}
 \end{tikzpicture}
 \end{figure}
@@ -530,7 +530,7 @@ sequential Strassen's algorithm with different amount of threads}
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=size, y=strassen_recursive, col sep=comma] {results_diff_size.csv};
     
-    \legend{matmul, strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+    \legend{matmul, strassen, parallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{semilogyaxis}
 \end{tikzpicture}
 \end{figure}
@@ -557,7 +557,7 @@ sequential Strassen's algorithm with different amount of threads}
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=size, y=speedup_strassen_recursive, col sep=comma] {results_diff_size.csv};
     
-    \legend{strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+    \legend{strassen, parallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{axis}
 \end{tikzpicture}
 \end{figure}
