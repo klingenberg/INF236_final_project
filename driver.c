@@ -55,11 +55,11 @@ int verify_matmul(double ** X, double **T, int dim) {
 
 int main(int argc, char *argv[]) {
     
-    int matmul = true;              /* Sequential Matrix Multiplication */
-    int strassen = true;           /* Sequential Strassen Algorithm */
-    int matmul_parallel = true;    /* Parallel Matrix Multiplication */
-    int strassen_parallel_2_layers = true;  /* Parallel Strassen Algorithm */
-    int strassen_parallel = true;  /* Parallel Strassen Algorithm */
+    int matmul = true;                      /* Sequential Matrix Multiplication */
+    int strassen = true;                    /* Sequential Strassen Algorithm */
+    int matmul_parallel = true;             /* Parallel Matrix Multiplication */
+    int strassen_parallel_2_layers = true;  /* Parallel Strassen Algorithm with 2 layers */
+    int strassen_parallel = true;           /* Parallel Strassen Algorithm with cutoff for matrix size 512x512 */
 
     sscanf(argv[2], "%d", &matmul);
     sscanf(argv[3], "%d", &strassen);
@@ -86,8 +86,6 @@ int main(int argc, char *argv[]) {
     B = allocate_matrix(dim,ptrB);
     C = allocate_matrix(dim,ptrC);
 
-
-    //srand(time(NULL));
     
     for(i = 0; i < dim; i++) {
         for(j = 0; j < dim; j++) {
@@ -148,6 +146,7 @@ int main(int argc, char *argv[]) {
         // printf("Done computing \n");
         // printf("Simple matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
         printf("%f, ", t_bs);
+
     } else {
         printf(", ");
     }
@@ -217,6 +216,7 @@ int main(int argc, char *argv[]) {
         
         // printf("Done computing \n");
         // printf("Parallel matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
+        
         printf("%f, ", t_bs);
     } else {
         printf(", ");

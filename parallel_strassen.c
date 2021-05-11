@@ -30,22 +30,12 @@ void parallel_matmul_strassen(double *C, double * A, double * B, int dim) {
 
 int parallel_strassen_end(double *C, double *A, double *B, int n, double *X, int depth){
 
-    //printf("level 2 depth: %d, n: %d\n",depth,n);
-
     double *A11, *A21, *A12, *A22;
     double *B11, *B21, *B12, *B22;
     double *N1, *N2, *N3, *N4, *N5, *N6, *X_small;
-
-    
-    // *********************************
-    // Sequential Strassen Algorithm
-    // *********************************
-
-    // printf("last layer strassen n: %d, depth: %d\n",n,depth);
     
     int k = n / 2;
 
-    // printf("parallel matmul for %d x %d\n",k,k);
 
     int kk = k*k;
 
@@ -67,11 +57,6 @@ int parallel_strassen_end(double *C, double *A, double *B, int n, double *X, int
     N4 = &C[kk];
     N5 = &C[2*kk];
     N6 = &C[3*kk];
-
-
-    // https://arxiv.org/pdf/0707.2347.pdf
-    // Winograd's form of Strassen algorithm, only 15 additions, not 18
-    // 6 temporary matrices
 
     #pragma omp parallel
     {
@@ -148,18 +133,9 @@ int parallel_strassen_end(double *C, double *A, double *B, int n, double *X, int
 
 int parallel_strassen_recursion(double *C, double *A, double *B, int n, double *X, int depth){
 
-    // printf("recursive strassen n: %d, depth: %d\n",n,depth);
-
-    //printf("level 1 depth: %d, n: %d\n",depth,n);
-
     double *A11, *A21, *A12, *A22;
     double *B11, *B21, *B12, *B22;
     double *N1, *N2, *N3, *N4, *N5, *N6, *X_small;
-
-    
-    // *********************************
-    // Sequential Strassen Algorithm
-    // *********************************
     
     int k = n / 2;
     int kk = k*k;
@@ -182,11 +158,6 @@ int parallel_strassen_recursion(double *C, double *A, double *B, int n, double *
     N4 = &C[kk];
     N5 = &C[2*kk];
     N6 = &C[3*kk];
-
-
-    // https://arxiv.org/pdf/0707.2347.pdf
-    // Winograd's form of Strassen algorithm, only 15 additions, not 18
-    // 6 temporary matrices
 
     #pragma omp parallel
     {
@@ -332,7 +303,7 @@ int parallel_strassen(double **C, double **A, double **B, int n, float *t){
     // help variables
     double *H;
 
-    H = allocate_array(3*(n*n)/4); // size 3/4 of original matrix
+    H = allocate_array(3*(n*n)/4);
 
     mt1 = omp_get_wtime();
 
