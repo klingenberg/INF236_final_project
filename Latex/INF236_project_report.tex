@@ -261,10 +261,10 @@ results, but we did not try that.
     title={Comparison of parallel matmul and parallel strassen to the sequential strassen with different amount of threads for matrices with size 256x256},
     xlabel={\#threads},
     ylabel={speedup},
-    xmin=1, xmax=512,
-    ymin=0, ymax=4,
+    xmin=0, xmax=8,
+    ymin=0, ymax=22,
     xtick={0, 1, 2, 5, 10, 20, 40, 60},
-    ytick={0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4},
+    ytick={0, 5, 10, 15, 20},
     legend pos=outer north east,
     xmajorgrids=true,
     ymajorgrids=true,
@@ -272,25 +272,150 @@ results, but we did not try that.
 ]
 
 	% normal strassen
-	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=size2, col sep=comma] {results.csv};
+	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result256.csv};
 	% parallel matmul
-	\addplot[color=gradient3, mark=*, only marks] table [x=config, y=size3, col sep=comma] {results.csv};
+	\addplot[color=gradient3, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result256.csv};
 	% parallel strassen
-	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=size4, col sep=comma] {results.csv};
+	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result256.csv};
     
     \legend{matmul, strassen, parallel matmul, parallel strassen}
 \end{axis}
 \end{tikzpicture}
 
 % Compare different number of threads for 512x512
+\begin{tikzpicture}
+\begin{axis}[
+    title={Comparison of parallel matmul and parallel strassen to the sequential strassen with different amount of threads for matrices with size 256x256},
+    xlabel={\#threads},
+    ylabel={speedup},
+    xmin=0, xmax=8,
+    ymin=0, ymax=22,
+    xtick={0, 1, 2, 5, 10, 20, 40, 60},
+    ytick={0, 5, 10, 15, 20},
+    legend pos=outer north east,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+
+	% normal strassen
+	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result512.csv};
+	% parallel matmul
+	\addplot[color=gradient3, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result512.csv};
+	% parallel strassen
+	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result512.csv};
+    
+    \legend{matmul, strassen, parallel matmul, parallel strassen}
+\end{axis}
+\end{tikzpicture}
 
 % Compare different number of threads for 1024x1024
+\begin{tikzpicture}
+\begin{axis}[
+    title={Comparison of parallel matmul and parallel strassen to the sequential strassen with different amount of threads for matrices with size 256x256},
+    xlabel={\#threads},
+    ylabel={speedup},
+    xmin=0, xmax=8,
+    ymin=0, ymax=22,
+    xtick={0, 1, 2, 5, 10, 20, 40, 60},
+    ytick={0, 5, 10, 15, 20},
+    legend pos=outer north east,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+
+	% normal strassen
+	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result1024.csv};
+	% parallel matmul
+	\addplot[color=gradient3, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result1024.csv};
+	% parallel strassen
+	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result1024.csv};
+    
+    \legend{matmul, strassen, parallel matmul, parallel strassen}
+\end{axis}
+\end{tikzpicture}
 
 % Compare different number of threads for 2048x2048
+\begin{tikzpicture}
+\begin{axis}[
+    title={Comparison of parallel matmul and parallel strassen to the sequential strassen with different amount of threads for matrices with size 256x256},
+    xlabel={\#threads},
+    ylabel={speedup},
+    xmin=0, xmax=8,
+    ymin=0, ymax=22,
+    xtick={0, 1, 2, 5, 10, 20, 40, 60},
+    ytick={0, 5, 10, 15, 20},
+    legend pos=outer north east,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+
+	% normal strassen
+	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result2048.csv};
+	% parallel matmul
+	\addplot[color=gradient3, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result2048.csv};
+	% parallel strassen
+	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result2048.csv};
+    
+    \legend{matmul, strassen, parallel matmul, parallel strassen}
+\end{axis}
+\end{tikzpicture}
 
 % Compare different number of threads for 4096x4096
+\begin{tikzpicture}
+\begin{axis}[
+    title={Comparison of parallel matmul and parallel strassen to the sequential strassen with different amount of threads for matrices with size 256x256},
+    xlabel={\#threads},
+    ylabel={speedup},
+    xmin=0, xmax=8,
+    ymin=0, ymax=22,
+    xtick={0, 1, 2, 5, 10, 20, 40, 60},
+    ytick={0, 5, 10, 15, 20},
+    legend pos=outer north east,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+
+	% normal strassen
+	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result4096.csv};
+	% parallel matmul
+	\addplot[color=gradient3, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result4096.csv};
+	% parallel strassen
+	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result4096.csv};
+    
+    \legend{matmul, strassen, parallel matmul, parallel strassen}
+\end{axis}
+\end{tikzpicture}
 
 % Compare different number of threads for 8192x8192
+\begin{tikzpicture}
+\begin{axis}[
+    title={Comparison of parallel matmul and parallel strassen to the sequential strassen with different amount of threads for matrices with size 256x256},
+    xlabel={\#threads},
+    ylabel={speedup},
+    xmin=0, xmax=8,
+    ymin=0, ymax=22,
+    xtick={0, 1, 2, 5, 10, 20, 40, 60},
+    ytick={0, 5, 10, 15, 20},
+    legend pos=outer north east,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+
+	% normal strassen
+	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result8192.csv};
+	% parallel matmul
+	\addplot[color=gradient3, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result8192.csv};
+	% parallel strassen
+	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result8192.csv};
+    
+    \legend{matmul, strassen, parallel matmul, parallel strassen}
+\end{axis}
+\end{tikzpicture}
 
 
 
