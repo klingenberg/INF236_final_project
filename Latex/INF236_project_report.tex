@@ -308,6 +308,7 @@ sequential Strassen's algorithm with different amount of threads}
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result256.csv};
     
     \legend{parallel matmul, parallel 2 layers Strassen, parallel recursive Strassen}
+
 \end{axis}
 \end{tikzpicture}
 \caption{Comparing different variants of Strassen's algorithm with matrix size 256 $\times$ 256}
@@ -339,8 +340,9 @@ sequential Strassen's algorithm with different amount of threads}
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result512.csv};
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result512.csv};
-    
+
 	\legend{parallel matmul, parallel 2 layers Strassen, parallel recursive Strassen}
+
 \end{axis}
 \end{tikzpicture}
 \caption{Comparing different variants of Strassen's algorithm with matrix size 512 $\times$ 512}
@@ -405,8 +407,9 @@ sequential Strassen's algorithm with different amount of threads}
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result2048.csv};
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result2048.csv};
-    
+
     \legend{parallel matmul, parallel 2 layers Strassen, parallel recursive Strassen}
+
 \end{axis}
 \end{tikzpicture}
 \caption{Comparing different variants of Strassen's algorithm with matrix size 2048 $\times$ 2048}
@@ -438,9 +441,9 @@ sequential Strassen's algorithm with different amount of threads}
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result4096.csv};
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result4096.csv};
-    
-    
+
     \legend{parallel matmul, parallel 2 layers Strassen, parallel recursive Strassen}
+
 \end{axis}
 \end{tikzpicture}
 \caption{Comparing different variants of Strassen's algorithm with matrix size 4096 $\times$ 4096}
@@ -512,6 +515,7 @@ sequential Strassen's algorithm with different amount of threads}
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_recursive, col sep=comma] {result8192.csv};
     
     \legend{matmul, Strassen, parallel matmul, parallel 2 layers Strassen, parallel recursive Strassen }
+
 \end{semilogyaxis}
 \end{tikzpicture}
 
@@ -543,7 +547,7 @@ sequential Strassen's algorithm with different amount of threads}
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=size, y=strassen_recursive, col sep=comma] {results_diff_size.csv};
     
-    \legend{matmul, strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+    \legend{matmul, strassen, parallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{semilogyaxis}
 \end{tikzpicture}
 
@@ -571,7 +575,7 @@ sequential Strassen's algorithm with different amount of threads}
 	
 	\addplot[color=gradient4, mark=*, only marks] table [x=size, y=speedup_strassen_recursive, col sep=comma] {results_diff_size.csv};
     
-    \legend{strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+    \legend{strassen, parallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{axis}
 \end{tikzpicture}
 
