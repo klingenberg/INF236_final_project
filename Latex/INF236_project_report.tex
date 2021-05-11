@@ -47,8 +47,6 @@ to parallelize. We used its implementation as a reference. We compared
 it with Strassen's algorithm, which has complexity $\mathcal{O}(n^{\log{}7})$
 but is harder to implement.
 
-
-
 \section{Algorithms}
 In this section all the implemented algorithms are explained in further detail.
 
@@ -201,6 +199,36 @@ results, but we did not try that.
     title={Sequential Strassen Algorithm with different values for the cutoff level},
     xlabel={cuttoff},
     ylabel={speedup},
+    xmin=1, xmax=512,
+    ymin=0, ymax=4,
+    xtick={0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512},
+    ytick={0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4},
+	xmode=log,
+    log basis x={2},
+    legend pos=outer north east,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+
+	% running time of normal sequential: 22.729855
+	\addplot[color=gradient1, mark=*, only marks] table [x=cutoff, y=size1, col sep=comma] {cutoffs.csv};
+	% running time of normal sequential: 1.397876
+	\addplot[color=gradient2, mark=*, only marks] table [x=cutoff, y=size2, col sep=comma] {cutoffs.csv};
+	% running time of normal sequential: 0.177942
+	\addplot[color=gradient3, mark=*, only marks] table [x=cutoff, y=size3, col sep=comma] {cutoffs.csv};
+	% running time of normal sequential: 0.032513
+	\addplot[color=gradient4, mark=*, only marks] table [x=cutoff, y=size4, col sep=comma] {cutoffs.csv};
+    
+    \legend{2048 $\times$ 2048, 1024 $\times$ 1024, 512 $\times$ 512, 256 $\times$ 256}
+\end{axis}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\begin{axis}[
+    title={Sequential Strassen Algorithm with different values for the cutoff level},
+    xlabel={Cuttoff},
+    ylabel={Speedup},
     xmin=1, xmax=512,
     ymin=0, ymax=4,
     xtick={0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512},
