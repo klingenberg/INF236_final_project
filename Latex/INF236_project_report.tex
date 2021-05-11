@@ -27,6 +27,7 @@
 \definecolor{gradient2}{HTML}{fd1d1d}
 \definecolor{gradient3}{HTML}{fc8a3b}
 \definecolor{gradient4}{HTML}{fcb045}
+\definecolor{gradient0}{HTML}{005ab3}
 
 
 \geometry{top=2cm, bottom=2cm, left=2cm, right=2cm}
@@ -232,7 +233,7 @@ results, but we did not try that.
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
-    ymin=0, ymax=22,
+    ymin=0, ymax=18,
     xtick={0, 1, 2, 3, 4, 5, 6, 7},
     xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
     ytick={0, 5, 10, 15, 20},
@@ -242,11 +243,11 @@ results, but we did not try that.
     grid style=dashed,
 ]
 
-	% normal strassen
+	
 	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result256.csv};
-	% parallel matmul
+	
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result256.csv};
-	% parallel strassen
+	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result256.csv};
     
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
@@ -260,21 +261,21 @@ results, but we did not try that.
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
-    ymin=0, ymax=22,
+    ymin=0, ymax=18,
     xtick={0, 1, 2, 3, 4, 5, 6, 7},
     xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
-    ytick={0, 5, 10, 15, 20},
+    ytick={0, 5, 10, 15},
     legend pos=outer north east,
     xmajorgrids=true,
     ymajorgrids=true,
     grid style=dashed,
 ]
 
-	% normal strassen
+	
 	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result512.csv};
-	% parallel matmul
+	
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result512.csv};
-	% parallel strassen
+	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result512.csv};
     
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
@@ -289,21 +290,21 @@ results, but we did not try that.
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
-    ymin=0, ymax=22,
+    ymin=0, ymax=18,
     xtick={0, 1, 2, 3, 4, 5, 6, 7},
     xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
-    ytick={0, 5, 10, 15, 20},
+    ytick={0, 5, 10, 15},
     legend pos=outer north east,
     xmajorgrids=true,
     ymajorgrids=true,
     grid style=dashed,
 ]
 
-	% normal strassen
+	
 	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result1024.csv};
-	% parallel matmul
+	
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result1024.csv};
-	% parallel strassen
+	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result1024.csv};
     
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
@@ -317,21 +318,21 @@ results, but we did not try that.
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
-    ymin=0, ymax=22,
+    ymin=0, ymax=18,
     xtick={0, 1, 2, 3, 4, 5, 6, 7},
     xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
-    ytick={0, 5, 10, 15, 20},
+    ytick={0, 5, 10, 15},
     legend pos=outer north east,
     xmajorgrids=true,
     ymajorgrids=true,
     grid style=dashed,
 ]
 
-	% normal strassen
+	
 	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result2048.csv};
-	% parallel matmul
+	
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result2048.csv};
-	% parallel strassen
+	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result2048.csv};
     
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
@@ -345,21 +346,21 @@ results, but we did not try that.
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
-    ymin=0, ymax=22,
+    ymin=0, ymax=18,
     xtick={0, 1, 2, 3, 4, 5, 6, 7},
     xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
-    ytick={0, 5, 10, 15, 20},
+    ytick={0, 5, 10, 15},
     legend pos=outer north east,
     xmajorgrids=true,
     ymajorgrids=true,
     grid style=dashed,
 ]
 
-	% normal strassen
+	
 	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result4096.csv};
-	% parallel matmul
+	
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result4096.csv};
-	% parallel strassen
+	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result4096.csv};
     
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
@@ -373,28 +374,57 @@ results, but we did not try that.
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
-    ymin=0, ymax=22,
+    ymin=0, ymax=18,
     xtick={0, 1, 2, 3, 4, 5, 6, 7},
     xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
-    ytick={0, 5, 10, 15, 20},
+    ytick={0, 5, 10, 15},
     legend pos=outer north east,
     xmajorgrids=true,
     ymajorgrids=true,
     grid style=dashed,
 ]
 
-	% normal strassen
+	
 	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result8192.csv};
-	% parallel matmul
+	
 	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result8192.csv};
-	% parallel strassen
+	
 	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result8192.csv};
     
     \legend{prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{axis}
 \end{tikzpicture}
 
+\subsection{Running times for all implemeted algorithms and different number of threads}
+% Running time for 8192
+\begin{tikzpicture}
+\begin{semilogyaxis}[
+    title={Matrices size 8192 $\times$ 8192},
+    xlabel={\#threads},
+    ylabel={running time in seconds},
+    xmin=0, xmax=8,
+    ymin=0, ymax=2500,
+    xtick={0, 1, 2, 3, 4, 5, 6, 7},
+    xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
+    legend pos=outer north east,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
 
+    \addplot[color=gradient0, mark=*] table [x=config, y=simple, col sep=comma] {result8192.csv};
+	
+	\addplot[color=gradient1, mark=*] table [x=config, y=strassen, col sep=comma] {result8192.csv};
+	
+	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=simple_parallel, col sep=comma] {result8192.csv};
+	
+	\addplot[color=gradient3, mark=*, only marks] table [x=config, y=strassen_2layers, col sep=comma] {result8192.csv};
+	
+	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_recursive, col sep=comma] {result8192.csv};
+    
+    \legend{matmul, strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+\end{semilogyaxis}
+\end{tikzpicture}
 
 \section{Conclusion}
 
