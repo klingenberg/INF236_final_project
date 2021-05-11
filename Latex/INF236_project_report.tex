@@ -191,7 +191,7 @@ In our implementation, we combined both z-ordering and usual row-by-row ordering
 We used the z-ordering for bigger submatrices, but
 we left the small submatrices which are multiplied with the simple multiplication algorithm
 in row-wise order (figure \ref{z_partly}). The functions for reordering matrices to this layout
-and back are implemented in \texttt{z\_order.c} file.
+and back are implemented in \texttt{z\_order.c} file. In our experiments we did not include the z-ordering in our running time calculations, as it is just a pre/post-processing step.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=.5]{partly_z_ordering.pdf}}
@@ -234,9 +234,10 @@ parallelized simple matrix multiplication.
 
 \section{Experiments}
 
-We ran all the experiments on the machine available at \texttt{brake.ii.uib.no}.
+We ran all the experiments on the machine available at \texttt{brake.ii.uib.no}. 
 
 \subsection{Sequential Strassen's algorithm}
+\label{section:sequential_strassen_alg}
 
 Strassen's algorithm theoretically runs recursively until submatrices reach dimension 1, such that the matrix multiplication just becomes a multiplication of two scalars.
 However, it is in practice faster to stop the recursion at a higher level, because for smaller matrix sizes, Strassen's algorithm performs worse than the standard matrix multiplication algorithm. Therefore, we experimented with different cutoff levels for different matrix sizes. The results can be seen in figure \ref{fig:cutoff_levels}. We found that the algorithm performs best when the submatrix size at the cutoff has dimension $64 \times 64$.
@@ -278,8 +279,10 @@ However, it is in practice faster to stop the recursion at a higher level, becau
 \label{fig:cutoff_levels}
 \end{figure}
 
+\newpage
 \subsection{Comparison of parallel matrix multiplication and parallel Strassen's algorithm to the
 sequential Strassen's algorithm with different amount of threads}
+\label{section:parallel_comp}
 
 Next, we compared all parallel algorithms with the non-parallel version of Strassen using different amount of threads. 
 In the following experiments, the submatrix dimension used at the cutoff level was of dimension 32$\times$32, which is not optimal, as shown before. 
@@ -508,6 +511,7 @@ dominates here.
 \newpage
 
 \subsection{Running times for all implemented algorithms and different numbers of threads}
+\label{section:threads_comp}
 
 After that, we compared all algorithms with different amount of threads on only one matrix size (8192$\times$8192).
 Figure \ref{fig:running_times_threads} shows, that for parallel Strassen's algorithm with cutoff 512, it is optimal
@@ -550,7 +554,8 @@ Unlike simple parallel matrix multiplication, which is faster with 60 threads th
 \end{figure}
 
 \newpage
-\subsection{All implemented algorithms for different sizes of matrices}
+\subsection{All implemented algorithms for different sizes of matrices} 
+\label{section:dimension_comp}
 
 Finally, we compared all the algorithms for different matrix sizes, also with sizes between powers of two. This can be clearly seen, as all Strassen variants have a large running time deviation right before the matrix dimension reaches 4096, while the other algorithms have a smooth trend, as they are not using the zero-padding. 
 
@@ -624,9 +629,12 @@ In figure \ref{fig:speedup_cmp} we compare the speedup with respect to the stand
 
 
 \section{Conclusion}
+The concept of Strassen's algorithm is to reduce the number of multiplication operations at the cost of some more additions and subtractions. However, the experiments in section \ref{section:sequential_strassen_alg} already showed, that those additions and subtractions can actually create enough overhead to slow the algorithm down.
 
+In section \ref{section:parallel_comp} we observed, that with a sufficient matrix size (e.g. 8192$\times$8192), the parallel variants of Strassen's algorithm run much faster than the standard parallel matrix multiplication algorithm. Particularly, for matrices with dimension 8192$\times$8192, the parallel recursive Strassen algorithm is running more than 3 times as fast as the 2-layers Strassen algorithm with an amount of 40 threads.
+Additionally, in the logarithmically scaled plot in section~\ref{section:threads_comp}, a~significant difference in running times between the parallel and non-parallel algorithms can be observed. 
 
-
+Finally, we focussed on the drawback of our implementation of zero-padding the matrices in section \ref{section:dimension_comp}. Actually, this does not hurt the running time of the parallel Strassen algorithms too bad, but the zero-padding could be done in a different, more efficient way.
 
 \printbibliography
 
