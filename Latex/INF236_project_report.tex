@@ -14,6 +14,8 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage[backend=biber]{biblatex}
+\usepackage{caption}
+\usepackage{subcaption}
 
 \addbibresource{citations.bib}
 
@@ -290,10 +292,11 @@ We ran this experiment for the following matrix sizes: \\
 $\{ 256 \times 256, 512 \times 512, 1024 \times 1024, 2048 \times 2048, 4096 \times 4096, 8192 \times 8192 \}$ \\
 The results are shown in the figures \ref{fig:strassen_cmp_256}, \ref{fig:strassen_cmp_512}, \ref{fig:strassen_cmp_1024}, \ref{fig:strassen_cmp_2048}, \ref{fig:strassen_cmp_4096} and \ref{fig:strassen_cmp_8192}
 
-
 % Compare different number of threads for 256x256
 \begin{figure}[h!]
-\center
+\centering
+\begin{subfigure}{.49\textwidth}
+\centering
 \begin{tikzpicture}
 \begin{axis}[
     xlabel={\#threads},
@@ -303,7 +306,7 @@ The results are shown in the figures \ref{fig:strassen_cmp_256}, \ref{fig:strass
     xtick={0, 1, 2, 3, 4, 5, 6, 7},
     xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
     ytick={0, 5, 10, 15, 20, 25},
-    legend pos=outer north east,
+    legend pos=north west,
     xmajorgrids=true,
     ymajorgrids=true,
     grid style=dashed,
@@ -319,16 +322,15 @@ The results are shown in the figures \ref{fig:strassen_cmp_256}, \ref{fig:strass
 
 \end{axis}
 \end{tikzpicture}
-\caption{Comparing different variants of Strassen's algorithm with matrix size 256$\times$256}
+\subcaption{Comparing different variants of Strassen's algorithm with matrix size 256$\times$256}
 \label{fig:strassen_cmp_256}
-\end{figure}
-
+\end{subfigure}
+\centering
 % Compare different number of threads for 512x512
-\begin{figure}[h!]
-\center
+\begin{subfigure}{.49\textwidth}
+\centering
 \begin{tikzpicture}
 \begin{axis}[
-    title={Matrices size 512$\times$512},
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
@@ -336,7 +338,7 @@ The results are shown in the figures \ref{fig:strassen_cmp_256}, \ref{fig:strass
     xtick={0, 1, 2, 3, 4, 5, 6, 7},
     xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
     ytick={0, 5, 10, 15},
-    legend pos=outer north east,
+    legend pos=north west,
     xmajorgrids=true,
     ymajorgrids=true,
     grid style=dashed,
@@ -353,16 +355,22 @@ The results are shown in the figures \ref{fig:strassen_cmp_256}, \ref{fig:strass
 
 \end{axis}
 \end{tikzpicture}
-\caption{Comparing different variants of Strassen's algorithm with matrix size 512$\times$512}
+\subcaption{Comparing different variants of Strassen's algorithm with matrix size 512$\times$512}
 \label{fig:strassen_cmp_512}
+\end{subfigure}
 \end{figure}
+
+For matrices of size 2048$\times$2048, it can be seen that the performace of parallel Strassen's
+algorithm is same for 2-layers version and cutoff 512 version, because there are two Strassen's
+levels in both of them.
 
 % Compare different number of threads for 1024x1024
 \begin{figure}[h!]
-\center
+\centering
+\begin{subfigure}{.49\textwidth}
+\centering
 \begin{tikzpicture}
 \begin{axis}[
-    title={Matrices size 1024$\times$1024},
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
@@ -370,7 +378,7 @@ The results are shown in the figures \ref{fig:strassen_cmp_256}, \ref{fig:strass
     xtick={0, 1, 2, 3, 4, 5, 6, 7},
     xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
     ytick={0, 5, 10, 15},
-    legend pos=outer north east,
+    legend pos=north west,
     xmajorgrids=true,
     ymajorgrids=true,
     grid style=dashed,
@@ -388,17 +396,12 @@ The results are shown in the figures \ref{fig:strassen_cmp_256}, \ref{fig:strass
 \end{tikzpicture}
 \caption{Comparing different variants of Strassen's algorithm with matrix size 1024$\times$1024}
 \label{fig:strassen_cmp_1024}
-\end{figure}
-
-For matrices of size 2048$\times$2048, it can be seen that the performace of parallel Strassen's
-algorithm is same for 2-layers version and cutoff 512 version, because there are two Strassen's
-levels in both of them.
+\end{subfigure}
 % Compare different number of threads for 2048x2048
-\begin{figure}[h!]
-\center
+\begin{subfigure}{.49\textwidth}
+\centering
 \begin{tikzpicture}
 \begin{axis}[
-    title={Matrices size 2048$\times$2048},
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
@@ -406,12 +409,11 @@ levels in both of them.
     xtick={0, 1, 2, 3, 4, 5, 6, 7},
     xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
     ytick={0, 5, 10, 15},
-    legend pos=outer north east,
+    legend pos=north west,
     xmajorgrids=true,
     ymajorgrids=true,
     grid style=dashed,
 ]
-
 	
 	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result2048.csv};
 	
@@ -425,14 +427,20 @@ levels in both of them.
 \end{tikzpicture}
 \caption{Comparing different variants of Strassen's algorithm with matrix size 2048$\times$2048}
 \label{fig:strassen_cmp_2048}
+\end{subfigure}
 \end{figure}
+
+For bigger matrices, the speedup for 2-layers parallel Strassen's algorithm is closer and closer
+to parallel matrix multiplication running time, because the parallel matrix multiplication running time
+dominates here.
 
 % Compare different number of threads for 4096x4096
 \begin{figure}[h!]
-\center
+\centering
+\begin{subfigure}{.49\textwidth}
+\centering
 \begin{tikzpicture}
 \begin{axis}[
-    title={Matrices size 4096$\times$4096},
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
@@ -440,7 +448,7 @@ levels in both of them.
     xtick={0, 1, 2, 3, 4, 5, 6, 7},
     xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
     ytick={0, 5, 10, 15},
-    legend pos=outer north east,
+    legend pos=north west,
     xmajorgrids=true,
     ymajorgrids=true,
     grid style=dashed,
@@ -457,19 +465,14 @@ levels in both of them.
 
 \end{axis}
 \end{tikzpicture}
-\caption{Comparing different variants of Strassen's algorithm with matrix size 4096$\times$4096}
+\subcaption{Comparing different variants of Strassen's algorithm with matrix size 4096$\times$4096}
 \label{fig:strassen_cmp_4096}
-\end{figure}
-
-For bigger matrices, the speedup for 2-layers parallel Strassen's algorithm is closer and closer
-to parallel matrix multiplication running time, because the parallel matrix multiplication running time
-dominates here.
+\end{subfigure}
 % Compare different number of threads for 8192x8192
-\begin{figure}[h!]
-\center
+\begin{subfigure}{.49\textwidth}
+\centering
 \begin{tikzpicture}
 \begin{axis}[
-    title={Matrices size 8192$\times$8192},
     xlabel={\#threads},
     ylabel={speedup},
     xmin=0, xmax=8,
@@ -477,12 +480,11 @@ dominates here.
     xtick={0, 1, 2, 3, 4, 5, 6, 7},
     xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
     ytick={0, 5, 10, 15},
-    legend pos=outer north east,
+    legend pos=north west,
     xmajorgrids=true,
     ymajorgrids=true,
     grid style=dashed,
 ]
-
 	
 	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result8192.csv};
 	
@@ -494,8 +496,9 @@ dominates here.
     
 \end{axis}
 \end{tikzpicture}
-\caption{Comparing different variants of Strassen's algorithm with matrix size 8192$\times$8192}
+\subcaption{Comparing different variants of Strassen's algorithm with matrix size 8192$\times$8192}
 \label{fig:strassen_cmp_8192}
+\end{subfigure}
 \end{figure}
 
 \subsection{Running times for all implemented algorithms and different numbers of threads}
