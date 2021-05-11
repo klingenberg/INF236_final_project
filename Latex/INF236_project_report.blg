@@ -1,17 +1,17 @@
 [0] Config.pm:304> INFO - This is Biber 2.14 (beta)
 [0] Config.pm:307> INFO - Logfile is 'INF236_project_report.blg'
-[103] biber:322> INFO - === Út kvě 11, 2021, 22:17:59
-[121] Biber.pm:415> INFO - Reading 'INF236_project_report.bcf'
-[200] Biber.pm:943> INFO - Found 1 citekeys in bib section 0
-[217] Biber.pm:4256> INFO - Processing section 0
-[217] Utils.pm:75> INFO - Globbing data source 'citations.bib'
-[217] Utils.pm:91> INFO - Globbed data source 'citations.bib' to citations.bib
-[231] Biber.pm:4455> INFO - Looking for bibtex format file 'citations.bib' for section 0
-[232] bibtex.pm:1653> INFO - LaTeX decoding ...
-[236] bibtex.pm:1471> INFO - Found BibTeX data source 'citations.bib'
-[278] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[278] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[278] Biber.pm:4084> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
-[278] Biber.pm:4090> INFO - No sort tailoring available for locale 'en-US'
-[287] bbl.pm:652> INFO - Writing 'INF236_project_report.bbl' with encoding 'UTF-8'
-[289] bbl.pm:755> INFO - Output to INF236_project_report.bbl
+[70] biber:322> INFO - === Út kvě 11, 2021, 22:33:01
+[81] Biber.pm:415> INFO - Reading 'INF236_project_report.bcf'
+[134] Biber.pm:943> INFO - Found 1 citekeys in bib section 0
+[145] Biber.pm:4256> INFO - Processing section 0
+[146] Utils.pm:75> INFO - Globbing data source 'citations.bib'
+[146] Utils.pm:91> INFO - Globbed data source 'citations.bib' to citations.bib
+[155] Biber.pm:4455> INFO - Looking for bibtex format file 'citations.bib' for section 0
+[156] bibtex.pm:1653> INFO - LaTeX decoding ...
+[159] bibtex.pm:1471> INFO - Found BibTeX data source 'citations.bib'
+[192] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[192] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[192] Biber.pm:4084> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
+[192] Biber.pm:4090> INFO - No sort tailoring available for locale 'en-US'
+[198] bbl.pm:652> INFO - Writing 'INF236_project_report.bbl' with encoding 'UTF-8'
+[199] bbl.pm:755> INFO - Output to INF236_project_report.bbl
