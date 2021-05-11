@@ -195,11 +195,12 @@ results, but we did not try that.
 
 \section{Experiments}
 	
+% Comparing different cutoff levels of sequential Strassen
 \begin{tikzpicture}
 \begin{axis}[
     title={Sequential Strassen Algorithm with different values for the cutoff level},
-    xlabel={Cuttoff},
-    ylabel={Speedup},
+    xlabel={cuttoff},
+    ylabel={speedup},
     xmin=1, xmax=512,
     ymin=0, ymax=4,
     xtick={0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512},
@@ -224,6 +225,45 @@ results, but we did not try that.
     \legend{2048 $\times$ 2048, 1024 $\times$ 1024, 512 $\times$ 512, 256 $\times$ 256}
 \end{axis}
 \end{tikzpicture}
+
+
+% Compare different number of threads for 256x256
+\begin{tikzpicture}
+\begin{axis}[
+    title={Comparison of parallel matmul and parallel strassen to the sequential strassen with different amount of threads for matrices with size 256x256},
+    xlabel={\#threads},
+    ylabel={speedup},
+    xmin=1, xmax=512,
+    ymin=0, ymax=4,
+    xtick={0, 1, 2, 5, 10, 20, 40, 60},
+    ytick={0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4},
+    legend pos=outer north east,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+
+	% normal strassen
+	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=size2, col sep=comma] {results.csv};
+	% parallel matmul
+	\addplot[color=gradient3, mark=*, only marks] table [x=config, y=size3, col sep=comma] {results.csv};
+	% parallel strassen
+	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=size4, col sep=comma] {results.csv};
+    
+    \legend{matmul, strassen, parallel matmul, parallel strassen}
+\end{axis}
+\end{tikzpicture}
+
+% Compare different number of threads for 512x512
+
+% Compare different number of threads for 1024x1024
+
+% Compare different number of threads for 2048x2048
+
+% Compare different number of threads for 4096x4096
+
+% Compare different number of threads for 8192x8192
+
 
 
 \section{Conclusion}
