@@ -1,4 +1,4 @@
-#include "morton_order.c"
+#include "z_order.c"
 
 void print_array_as_matrix(double *A,int dim) {
     int j;
@@ -147,7 +147,7 @@ int sequential_strassen(double **C, double **A, double **B, int n, float *t){
     double *R;
     R = allocate_array(n*n);
 
-    int depth = 32;
+    int depth = 64;
 
     double *rA, *rB;
     rA = reorder_to_morton_array(A, n, depth);

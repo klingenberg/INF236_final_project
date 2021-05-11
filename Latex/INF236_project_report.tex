@@ -48,19 +48,36 @@ to parallelize. We used its implementation as a reference. We compared
 it with Strassen's algorithm, which has complexity $\mathcal{O}(n^{\log{}7})$
 but is harder to implement.
 
+\section{Files}
+\begin{itemize}
+    \item \texttt{driver.c} driver allocates matrices, runs the multiplication,
+    measures time and verifies results
+    \item \texttt{driver.h} includes C libraries
+    \item \texttt{cFiles.h} includes \texttt{.c} files with multiplication implementations
+
+    \item \texttt{sequential\_matmul.c} sequential simple matrix multiplication
+    \item \texttt{sequential\_strassen.c} sequential Strassen's algorithm
+    \item \texttt{parallel\_matmul.c} simple matrix multiplication in parallel
+    \item \texttt{parallel\_strassen\_2\_layers.c} two levels of Strassen's algorithm,
+    then simple multiplication in parallel
+    \item \texttt{parallel\_strassen.c} recursive Strassen's algorithm with parallel
+    additions and subtractions
+    \item \texttt{z\_order.c} functions for reordering matrix to z-ordering and back
+\end{itemize}
+
 \section{Algorithms}
 In this section all the implemented algorithms are explained in further detail.
 
-\subsection{Matrix Multiplication}
+\subsection{Matrix multiplication}
 The standard $\mathcal{O}(n^3)$ algorithm is simple. Each element $c_{ij}$ of 
 the resulting matrix $\mathbf{C}$ is calculated as $c_{ij} =\sum_k a_{ik} \cdot b_{kj}$.
-It is possible to implement the calculation with only three nested for-loops, but 
+It is possible to implement the calculation with only three nested for-loops. But 
 matrices are stored row-wise, so it is better to access it in consecutive order, in order to avoid cache misses.
 Because of that, we used the following implementation. Complexity is still $\mathcal{O}(n^3)$,
-but in practice it runs faster than with three nested loops that are indexed in $kij$ order.
+but in practice it runs faster than with three nested loops that are indexed in $kij$ order. %why kij?
 
 \begin{algorithm}[H] 
-\caption{Matrix Multiplication}
+\caption{matrix multiplication}
 \label{alg:matmul}
 \begin{algorithmic}[1]
 \Require{$\mathbf{A}, \mathbf{B}$} %Input
@@ -82,11 +99,11 @@ but in practice it runs faster than with three nested loops that are indexed in 
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Parallel Matrix Multiplication}
+\subsection{Parallel matrix multiplication}
 We just parallelized the outermost loop of the simple matrix multiplication algorithm
-described in previous section.
+described in previous section with \texttt{\#pragma omp parallel for}.
 
-\subsection{Strassen Algorithm}
+\subsection{Strassen's algorithm}
 
 The matrix multiplication can be formulated in terms of block matrices:
 $$
@@ -115,11 +132,11 @@ $$
 
 According to this formula, it needs 8 multiplications of half-size matrices. 
 The idea of Strassen's algorithm is to use more additions and subtractions,
-but only 7 multiplications half-size matrices. The algorithm is used recursively
-for these multiplications.
+but only 7 multiplications half-size matrices. Then, the algorithm is used recursively
+for these multiplications. You can see a pseudocode of Strassen's algorithm below.
 
 \begin{algorithm}[H] 
-\caption{Strassen Matrix Multiplication}
+\caption{Strassen's matrix multiplication}
 \label{alg:strassen}
 \begin{algorithmic}[1]
 \Require{$\mathbf{A}, \mathbf{B}$} %Input
@@ -146,21 +163,16 @@ for these multiplications.
 \end{algorithmic}
 \end{algorithm}
 
+There are 18 additions and subtractions calculated in Strassen's algorithm.
 We used Winograd's version of Strassen's algorithm described in \cite{boyer2009memory}.
-It needs only 15 additions and subtractions instead of 18 because some results of 
-these additions and subtractions are reused. We also used scheduling table 1, 
-therefore our implementation needs only two temporary matrices in each recursive call
+It needs only 15 additions and subtractions because some results are reused.
+We also used scheduling table 1 from the same paper.
+Therefore our implementation needs only two temporary matrices in each recursive call
 to store intermediate results.
 
 Strassen's algorithm is recursive and it is working with quarters of input matrices.
-Because of that, it is useful to use z-ordering for storing matrices in our implementation.
-Its advantage is, that all submatrices are stored in consecutive parts of memory.
-But we switch from Strassen's algorithm to the simple matrix multiplication
-when the matrices are too small so Strassen's algorithm overhead is too big.
-For the simple matrix multiplication is better to have the matrices ordered row-wise.
-We combined both and used the z-ordering down to the cutting point of recursion.
-We left the small submatrices which are multiplied with the simple multiplication algorithm
-in row-wise order. %The reordering functions are implemented in TODO file.
+Because of that, it is useful to use some recursive ordering for storing matrices in memory,
+for example z-ordering \ref{z_diagram}, \ref{z_mem}.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=.3]{z_ordering.pdf}}
@@ -169,16 +181,27 @@ in row-wise order. %The reordering functions are implemented in TODO file.
 \end{figure}
 
 \begin{figure}[htbp]
+\centerline{\includegraphics[scale=.35]{mem_ordering.pdf}}
+\caption{row-ordered and z-ordered matrix stored in memory}
+\label{z_mem}
+\end{figure}
+
+Its advantage is, that all submatrices are stored in consecutive parts of memory.
+However, there is switch from Strassen's algorithm to the simple matrix multiplication
+when the matrices are too small so Strassen's algorithm overhead is too big.
+For the simple matrix multiplication is better to have the matrices ordered row-wise.
+In our implementation, we combined both z-ordering and usual row-by-row ordering.
+We used the z-ordering for bigger submatrices, but
+we left the small submatrices which are multiplied with the simple multiplication algorithm
+in row-wise order \ref{z_partly}. Functions for reordering matrices to this layout and back are implemented
+in \texttt{z\_order.c} file.
+
+\begin{figure}[htbp]
 \centerline{\includegraphics[scale=.5]{partly_z_ordering.pdf}}
 \caption{z-ordering only for bigger submatrices}
 \label{z_partly}
 \end{figure}
 
-\begin{figure}[htbp]
-\centerline{\includegraphics[scale=.35]{mem_ordering.pdf}}
-\caption{row-ordered and z-ordered matrix stored in memory}
-\label{z_mem}
-\end{figure}
 
 \subsection{Parallel Strassen Algorithm}
 
@@ -193,11 +216,13 @@ a recursive call before starting the next one. This may be solved using more spa
 results, but we did not try that.
 
 \section{Experiments}
+
+\subsection{Sequential Strassen's algorithm}
 	
 % Comparing different cutoff levels of sequential Strassen
 \begin{tikzpicture}
 \begin{axis}[
-    title={Sequential Strassen Algorithm with different values for the cutoff level},
+    title={Sequential Strassen's algorithm with different values for the cutoff level},
     xlabel={cuttoff},
     ylabel={speedup},
     xmin=1, xmax=512,
@@ -226,7 +251,8 @@ results, but we did not try that.
 \end{axis}
 \end{tikzpicture}
 
-\subsection{Comparison of parallel matmul and parallel strassen to the sequential strassen with different amount of threads}
+\subsection{Comparison of parallel matrix multiplication and parallel Strassen's algorithm to the
+sequential Strassen's algorithm with different amount of threads}
 % Compare different number of threads for 256x256
 \begin{tikzpicture}
 \begin{axis}[
@@ -396,7 +422,7 @@ results, but we did not try that.
 \end{axis}
 \end{tikzpicture}
 
-\subsection{Running times for all implemeted algorithms and different number of threads}
+\subsection{Running times for all implemeted algorithms and different numbers of threads}
 % Running time for 8192
 \begin{tikzpicture}
 \begin{semilogyaxis}[
@@ -425,6 +451,58 @@ results, but we did not try that.
     
     \legend{matmul, strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{semilogyaxis}
+\end{tikzpicture}
+
+\subsection{All implemeted algorithms for different sizes of matrices}
+
+\begin{tikzpicture}
+\begin{semilogyaxis}[
+    title={Running time with 40 threads},
+    xlabel={matrix size},
+    ylabel={running time in seconds},
+    ymin=0, ymax=400,
+    legend pos=outer north east,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+
+    \addplot[color=gradient0, mark=*, only marks] table [x=size, y=simple, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient1, mark=*, only marks] table [x=size, y=strassen, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient2, mark=*, only marks] table [x=size, y=simple_parallel, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient3, mark=*, only marks] table [x=size, y=strassen_2layers, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient4, mark=*, only marks] table [x=size, y=strassen_recursive, col sep=comma] {results_diff_size.csv};
+    
+    \legend{matmul, strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+\end{semilogyaxis}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\begin{axis}[
+    title={Speedup with respect to simple matrix multiplication},
+    xlabel={matrix size},
+    ylabel={running time in seconds},
+    ymin=0, ymax=60,
+    legend pos=outer north east,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+	
+	\addplot[color=gradient0, mark=*, only marks] table [x=size, y=speedup_strassen, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient1, mark=*, only marks] table [x=size, y=speedup_simple_parallel, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient2, mark=*, only marks] table [x=size, y=speedup_strassen_2layers, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient4, mark=*, only marks] table [x=size, y=speedup_strassen_recursive, col sep=comma] {results_diff_size.csv};
+    
+    \legend{strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+\end{axis}
 \end{tikzpicture}
 
 \section{Conclusion}

@@ -143,7 +143,6 @@ int main(int argc, char *argv[]) {
             printmatrix(C_seq, dim);
         }
         
-        // printf("Done computing \n");
         // printf("Simple matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
         printf("%f, ", t_bs);
 
@@ -159,10 +158,10 @@ int main(int argc, char *argv[]) {
 
             if (new_dim != dim) {
                 sequential_strassen(C_new, A_new, B_new, new_dim, &t);
-                //verify_matmul(C_new, C_seq, dim);
+                if (matmul) verify_matmul(C_new, C_seq, dim);
             } else {
                 sequential_strassen(C, A, B, new_dim, &t);
-                //verify_matmul(C, C_seq, dim);
+                if (matmul) verify_matmul(C, C_seq, dim);
             }
 
             
@@ -173,14 +172,13 @@ int main(int argc, char *argv[]) {
                 t_bs = t;
         }
         
-        /*
+        
         if (dim <= 10) {
             printf("Strassen: \n");
             printf("C = ");
             printmatrix(C, dim);
-        }*/
+        }
         
-        //printf("Done computing \n");
         //printf("Strassen matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
     
     printf("%f, ", t_bs);
@@ -199,24 +197,22 @@ int main(int argc, char *argv[]) {
             
             mt2 = omp_get_wtime();
             
-            //verify_matmul(C, C_seq, dim);
+            if (matmul) verify_matmul(C, C_seq, dim);
             
             //*** Capture best run
             
             if ((t_bs < 0) || (mt2 - mt1 < t_bs))
                 t_bs = mt2 - mt1;
         }
-        /*
+
         if (dim <= 10) {
-            printf("Parallel: \n");
+            printf("Parallel matmul: \n");
             printf("C = ");
             printmatrix(C_seq, dim);
         }
-        */
         
-        // printf("Done computing \n");
         // printf("Parallel matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
-        
+
         printf("%f, ", t_bs);
     } else {
         printf(", ");
@@ -229,10 +225,10 @@ int main(int argc, char *argv[]) {
             
             if (new_dim != dim) {
                 parallel_strassen_2_layers(C_new, A_new, B_new, new_dim, &t);
-                //verify_matmul(C_new, C_seq, dim);
+                if (matmul) verify_matmul(C_new, C_seq, dim);
             } else {
                 parallel_strassen_2_layers(C, A, B, new_dim, &t);
-                //verify_matmul(C, C_seq, dim);
+                if (matmul) verify_matmul(C, C_seq, dim);
             }
             
             //*** Capture best run
@@ -240,17 +236,15 @@ int main(int argc, char *argv[]) {
             if ((t_bs < 0) || (t < t_bs))
                 t_bs = t;
         }
-        /*
+        
         if (dim <= 10) {
-            printf("Parallel Strassen: \n");
+            printf("Parallel Strassen 2 layers: \n");
             printf("C = ");
             printmatrix(C, dim);
         }
-        */
         
-        //printf("Done computing \n");
         //printf("Parallel 2-layers Strassen matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
-    printf("%f, ", t_bs);
+        printf("%f, ", t_bs);
     } else {
         printf(", ");
     }
@@ -262,10 +256,11 @@ int main(int argc, char *argv[]) {
             
             if (new_dim != dim) {
                 parallel_strassen(C_new, A_new, B_new, new_dim, &t);
-                //verify_matmul(C_new, C_seq, dim);
+                if (matmul) verify_matmul(C_new, C_seq, dim);
             } else {
                 parallel_strassen(C, A, B, new_dim, &t);
-                //verify_matmul(C, C_seq, dim);
+
+                if (matmul) verify_matmul(C, C_seq, dim);
             }
             
             //*** Capture best run
@@ -273,17 +268,15 @@ int main(int argc, char *argv[]) {
             if ((t_bs < 0) || (t < t_bs))
                 t_bs = t;
         }
-        /*
+        
         if (dim <= 10) {
             printf("Parallel Strassen: \n");
             printf("C = ");
             printmatrix(C, dim);
         }
-        */
         
-        //printf("Done computing \n");
         //printf("Parallel Strassen matrix multiplication with %d x %d matrices took %f seconds\n", dim, dim, t_bs);
-    printf("%f ", t_bs);
+        printf("%f ", t_bs);
     } else {
         printf(" ");
     }
