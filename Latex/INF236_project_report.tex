@@ -68,16 +68,16 @@ but is harder to implement.
 \section{Algorithms}
 In this section all the implemented algorithms are explained in further detail.
 
-\subsection{Matrix Multiplication}
+\subsection{Matrix multiplication}
 The standard $\mathcal{O}(n^3)$ algorithm is simple. Each element $c_{ij}$ of 
 the resulting matrix $\mathbf{C}$ is calculated as $c_{ij} =\sum_k a_{ik} \cdot b_{kj}$.
-It is possible to implement the calculation with only three nested for-loops, but 
+It is possible to implement the calculation with only three nested for-loops. But 
 matrices are stored row-wise, so it is better to access it in consecutive order, in order to avoid cache misses.
 Because of that, we used the following implementation. Complexity is still $\mathcal{O}(n^3)$,
-but in practice it runs faster than with three nested loops that are indexed in $kij$ order.
+but in practice it runs faster than with three nested loops that are indexed in $kij$ order. %why kij?
 
 \begin{algorithm}[H] 
-\caption{Matrix Multiplication}
+\caption{matrix multiplication}
 \label{alg:matmul}
 \begin{algorithmic}[1]
 \Require{$\mathbf{A}, \mathbf{B}$} %Input
@@ -99,11 +99,11 @@ but in practice it runs faster than with three nested loops that are indexed in 
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Parallel Matrix Multiplication}
+\subsection{Parallel matrix multiplication}
 We just parallelized the outermost loop of the simple matrix multiplication algorithm
-described in previous section.
+described in previous section with \texttt{\#pragma omp parallel for}.
 
-\subsection{Strassen Algorithm}
+\subsection{Strassen's algorithm}
 
 The matrix multiplication can be formulated in terms of block matrices:
 $$
@@ -132,11 +132,11 @@ $$
 
 According to this formula, it needs 8 multiplications of half-size matrices. 
 The idea of Strassen's algorithm is to use more additions and subtractions,
-but only 7 multiplications half-size matrices. The algorithm is used recursively
-for these multiplications.
+but only 7 multiplications half-size matrices. Then, the algorithm is used recursively
+for these multiplications. You can see a pseudocode of Strassen's algorithm below.
 
 \begin{algorithm}[H] 
-\caption{Strassen Matrix Multiplication}
+\caption{Strassen's matrix multiplication}
 \label{alg:strassen}
 \begin{algorithmic}[1]
 \Require{$\mathbf{A}, \mathbf{B}$} %Input
@@ -163,21 +163,16 @@ for these multiplications.
 \end{algorithmic}
 \end{algorithm}
 
+There are 18 additions and subtractions calculated in Strassen's algorithm.
 We used Winograd's version of Strassen's algorithm described in \cite{boyer2009memory}.
-It needs only 15 additions and subtractions instead of 18 because some results of 
-these additions and subtractions are reused. We also used scheduling table 1, 
-therefore our implementation needs only two temporary matrices in each recursive call
+It needs only 15 additions and subtractions because some results are reused.
+We also used scheduling table 1 from the same paper.
+Therefore our implementation needs only two temporary matrices in each recursive call
 to store intermediate results.
 
 Strassen's algorithm is recursive and it is working with quarters of input matrices.
-Because of that, it is useful to use z-ordering for storing matrices in our implementation.
-Its advantage is, that all submatrices are stored in consecutive parts of memory.
-But we switch from Strassen's algorithm to the simple matrix multiplication
-when the matrices are too small so Strassen's algorithm overhead is too big.
-For the simple matrix multiplication is better to have the matrices ordered row-wise.
-We combined both and used the z-ordering down to the cutting point of recursion.
-We left the small submatrices which are multiplied with the simple multiplication algorithm
-in row-wise order. %The reordering functions are implemented in TODO file.
+Because of that, it is useful to use some recursive ordering for storing matrices in memory,
+for example z-ordering \ref{z_diagram}, \ref{z_mem}.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=.3]{z_ordering.pdf}}
@@ -186,16 +181,27 @@ in row-wise order. %The reordering functions are implemented in TODO file.
 \end{figure}
 
 \begin{figure}[htbp]
+\centerline{\includegraphics[scale=.35]{mem_ordering.pdf}}
+\caption{row-ordered and z-ordered matrix stored in memory}
+\label{z_mem}
+\end{figure}
+
+Its advantage is, that all submatrices are stored in consecutive parts of memory.
+However, there is switch from Strassen's algorithm to the simple matrix multiplication
+when the matrices are too small so Strassen's algorithm overhead is too big.
+For the simple matrix multiplication is better to have the matrices ordered row-wise.
+In our implementation, we combined both z-ordering and usual row-by-row ordering.
+We used the z-ordering for bigger submatrices, but
+we left the small submatrices which are multiplied with the simple multiplication algorithm
+in row-wise order \ref{z_partly}. Functions for reordering matrices to this layout and back are implemented
+in \texttt{z\_order.c} file.
+
+\begin{figure}[htbp]
 \centerline{\includegraphics[scale=.5]{partly_z_ordering.pdf}}
 \caption{z-ordering only for bigger submatrices}
 \label{z_partly}
 \end{figure}
 
-\begin{figure}[htbp]
-\centerline{\includegraphics[scale=.35]{mem_ordering.pdf}}
-\caption{row-ordered and z-ordered matrix stored in memory}
-\label{z_mem}
-\end{figure}
 
 \subsection{Parallel Strassen Algorithm}
 
