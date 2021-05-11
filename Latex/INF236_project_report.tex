@@ -48,6 +48,23 @@ to parallelize. We used its implementation as a reference. We compared
 it with Strassen's algorithm, which has complexity $\mathcal{O}(n^{\log{}7})$
 but is harder to implement.
 
+\section{Files}
+\begin{itemize}
+    \item \texttt{driver.c} driver allocates matrices, runs the multiplication,
+    measures time and verifies results
+    \item \texttt{driver.h} includes C libraries
+    \item \texttt{cFiles.h} includes \texttt{.c} files with multiplication implementations
+
+    \item \texttt{sequential\_matmul.c} sequential simple matrix multiplication
+    \item \texttt{sequential\_strassen.c} sequential Strassen's algorithm
+    \item \texttt{parallel\_matmul.c} simple matrix multiplication in parallel
+    \item \texttt{parallel\_strassen\_2\_layers.c} two levels of Strassen's algorithm,
+    then simple multiplication in parallel
+    \item \texttt{parallel\_strassen.c} recursive Strassen's algorithm with parallel
+    additions and subtractions
+    \item \texttt{z\_order.c} functions for reordering matrix to z-ordering and back
+\end{itemize}
+
 \section{Algorithms}
 In this section all the implemented algorithms are explained in further detail.
 
@@ -193,11 +210,13 @@ a recursive call before starting the next one. This may be solved using more spa
 results, but we did not try that.
 
 \section{Experiments}
+
+\subsection{Sequential Strassen's algorithm}
 	
 % Comparing different cutoff levels of sequential Strassen
 \begin{tikzpicture}
 \begin{axis}[
-    title={Sequential Strassen Algorithm with different values for the cutoff level},
+    title={Sequential Strassen's algorithm with different values for the cutoff level},
     xlabel={cuttoff},
     ylabel={speedup},
     xmin=1, xmax=512,
@@ -226,7 +245,8 @@ results, but we did not try that.
 \end{axis}
 \end{tikzpicture}
 
-\subsection{Comparison of parallel matmul and parallel strassen to the sequential strassen with different amount of threads}
+\subsection{Comparison of parallel matrix multiplication and parallel Strassen's algorithm to the
+sequential Strassen's algorithm with different amount of threads}
 % Compare different number of threads for 256x256
 \begin{tikzpicture}
 \begin{axis}[
@@ -396,7 +416,7 @@ results, but we did not try that.
 \end{axis}
 \end{tikzpicture}
 
-\subsection{Running times for all implemeted algorithms and different number of threads}
+\subsection{Running times for all implemeted algorithms and different numbers of threads}
 % Running time for 8192
 \begin{tikzpicture}
 \begin{semilogyaxis}[
@@ -425,6 +445,58 @@ results, but we did not try that.
     
     \legend{matmul, strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
 \end{semilogyaxis}
+\end{tikzpicture}
+
+\subsection{All implemeted algorithms for different sizes of matrices}
+
+\begin{tikzpicture}
+\begin{semilogyaxis}[
+    title={Running time with 40 threads},
+    xlabel={matrix size},
+    ylabel={running time in seconds},
+    ymin=0, ymax=400,
+    legend pos=outer north east,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+
+    \addplot[color=gradient0, mark=*, only marks] table [x=size, y=simple, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient1, mark=*, only marks] table [x=size, y=strassen, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient2, mark=*, only marks] table [x=size, y=simple_parallel, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient3, mark=*, only marks] table [x=size, y=strassen_2layers, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient4, mark=*, only marks] table [x=size, y=strassen_recursive, col sep=comma] {results_diff_size.csv};
+    
+    \legend{matmul, strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+\end{semilogyaxis}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\begin{axis}[
+    title={Speedup with respect to simple matrix multiplication},
+    xlabel={matrix size},
+    ylabel={running time in seconds},
+    ymin=0, ymax=60,
+    legend pos=outer north east,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+	
+	\addplot[color=gradient0, mark=*, only marks] table [x=size, y=speedup_strassen, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient1, mark=*, only marks] table [x=size, y=speedup_simple_parallel, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient2, mark=*, only marks] table [x=size, y=speedup_strassen_2layers, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient4, mark=*, only marks] table [x=size, y=speedup_strassen_recursive, col sep=comma] {results_diff_size.csv};
+    
+    \legend{strassen, prallel matmul, parallel 2 layers strassen, parallel recursive strassen }
+\end{axis}
 \end{tikzpicture}
 
 \section{Conclusion}

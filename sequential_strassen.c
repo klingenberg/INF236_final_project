@@ -1,4 +1,4 @@
-#include "morton_order.c"
+#include "z_order.c"
 
 void print_array_as_matrix(double *A,int dim) {
     int j;
