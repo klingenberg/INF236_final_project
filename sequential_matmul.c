@@ -1,5 +1,5 @@
 int sequential_matmul(double ** C, double ** A, double ** B, int dim) {
-    
+      
     int i, j, k;
     
     // *********************************

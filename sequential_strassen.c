@@ -47,6 +47,7 @@ int sequential_strassen_recursion(double *C, double *A, double *B, int n, double
     
     // Depth level:
     if (n <= depth) {
+        // if the matrices are <= size "depth", the normal multiplication is used
         matmul(C, A, B, n);
         return 0;
     }
@@ -54,6 +55,7 @@ int sequential_strassen_recursion(double *C, double *A, double *B, int n, double
     int k = n / 2;
     int kk = k*k;
 
+    // pointers to submatrices
     A11 = &A[0];
     A12 = &A[kk];
     A21 = &A[2*kk];
@@ -64,10 +66,12 @@ int sequential_strassen_recursion(double *C, double *A, double *B, int n, double
     B21 = &B[2*kk];
     B22 = &B[3*kk];
 
+    // help variables
     N1 = &X[0];
     N2 = &X[kk];
     X_small = &X[2*kk];
 
+    // parts of C, also used as help variables
     N3 = &C[0];
     N4 = &C[kk];
     N5 = &C[2*kk];
@@ -143,7 +147,7 @@ int sequential_strassen(double **C, double **A, double **B, int n, float *t){
     double *R;
     R = allocate_array(n*n);
 
-    int depth = 32;
+    int depth = 64;
 
     double *rA, *rB;
     rA = reorder_to_morton_array(A, n, depth);
@@ -151,8 +155,7 @@ int sequential_strassen(double **C, double **A, double **B, int n, float *t){
 
     // help variables
     double *H;
-
-    H = allocate_array(3*(n*n)/4); // size 3/4 of original matrix
+    H = allocate_array(3*(n*n)/4); // size 3/4 of original matrix - it is enough for intermediate results
 
     mt1 = omp_get_wtime();
     sequential_strassen_recursion(R, rA, rB, n, H, depth);
