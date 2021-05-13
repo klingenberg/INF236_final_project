@@ -3,7 +3,8 @@
 
 \usetheme{UiB}
 
-
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
 \usepackage[utf8]{inputenx} % For æ, ø, å
 \usepackage{csquotes}       % Quotation marks
 \usepackage{microtype}      % Improved typography
@@ -34,17 +35,135 @@
     \tableofcontents[currentsection]
 \end{frame}
 
-\section{Introduction}
-
 \begin{frame}{Introduction}
-
+	\begin{itemize}
+        \item
+        Complexity: $\mathcal{O}(n^3)$
+        \item 
+        Consecutive memory access
+    \end{itemize}
+    
+	\begin{algorithm}[H] 
+\caption{matrix multiplication}
+\label{alg:matmul}
+\begin{algorithmic}[1]
+\Require{$\mathbf{A}, \mathbf{B}$} %Input
+\Ensure{$\mathbf{C}$ (the resulting matrix)} %Output
+\Statex
+\Function{matmul}{$\mathbf{A}, \mathbf{B}$}
+	\For{$i=0, \ldots, n-1$}
+		\For {$j=0, \ldots, n-1$}
+			\State {$c[i][j] = 0$}
+		\EndFor
+		\For{$k=0, \ldots, n-1$}
+			\For{$j=0, \ldots, n-1$}
+				\State {$c[i][j] += a[i][k] \cdot b[k][j]$}
+			\EndFor
+		\EndFor
+	\EndFor
+	\State \Return {$\mathbf{C}$}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
 \end{frame}
 
 \section{Strassen's Algorithm}
 
 \begin{frame}{Strassen's Algorithm}
 
+\begin{itemize}
+        \item
+        Blockwise matrix multiplication
+        \begin{align*}
+\mathbf{A} \cdot \mathbf{B} &=
+\begin{pmatrix}
+\mathbf{A}_{00} & \mathbf{A}_{01} \\
+\mathbf{A}_{10} & \mathbf{A}_{11} 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+\mathbf{B}_{00} & \mathbf{B}_{01} \\
+\mathbf{B}_{10} & \mathbf{B}_{11} 
+\end{pmatrix} \\
+&=
+\begin{pmatrix}
+\mathbf{A}_{00}\mathbf{B}_{00}+\mathbf{A}_{01}\mathbf{B}_{10} & \mathbf{A}_{00}\mathbf{B}_{01}+\mathbf{A}_{01}\mathbf{B}_{11} \\
+\mathbf{A}_{10}\mathbf{B}_{00}+\mathbf{A}_{11}\mathbf{B}_{10} & \mathbf{A}_{10}\mathbf{B}_{01}+\mathbf{A}_{11}\mathbf{B}_{11} 
+\end{pmatrix} \\
+&=
+\begin{pmatrix}
+\mathbf{C}_{00} & \mathbf{C}_{01} \\
+\mathbf{C}_{10} & \mathbf{C}_{11} 
+\end{pmatrix}
+= \mathbf{C}
+\end{align*}
+	\item 
+     Idea: reduce number of multiplications from 8 to 7
+     \item 
+     Complexity of Strassen's algorithm: 
+    $\mathcal{O}(n^{\log_2{7}}) \approx \mathcal{O}(n^{2.8073})$
+    \end{itemize}
 \end{frame}
+
+
+\begin{frame}{Strassen's Algorithm}
+\begin{center}
+    \scalebox{0.75}{
+    \begin{minipage}{0.7\linewidth}
+\begin{algorithm}[H] 
+\caption{Strassen's matrix multiplication}
+\label{alg:strassen}
+\begin{algorithmic}[1]
+\Require{$\mathbf{A}, \mathbf{B}$} %Input
+\Ensure{$\mathbf{C}$ (the resulting matrix)} %Output
+\Statex
+\Function{strassen}{$\mathbf{A}, \mathbf{B}, n$}
+	\If {n == cutoff}
+		\State \Return \Call{matmul}{$\mathbf{A}, \mathbf{B}$}
+	\EndIf
+	\State {$\mathbf{P}_1 = \Call{strassen}{\mathbf{A}_{00} + \mathbf{A}_{11},  \mathbf{B}_{00} + \mathbf{B}_{11}, \frac{n}{2}$}}
+	\State {$\mathbf{P}_2 = \Call{strassen}{\mathbf{A}_{10} + \mathbf{A}_{11},  \mathbf{B}_{00}, \frac{n}{2}$}}
+	\State {$\mathbf{P}_3 = \Call{strassen}{\mathbf{A}_{00},  \mathbf{B}_{01} - \mathbf{B}_{11}, \frac{n}{2}$}}
+	\State {$\mathbf{P}_4 = \Call{strassen}{\mathbf{A}_{11},  \mathbf{B}_{10} - \mathbf{B}_{00}, \frac{n}{2}$}}
+	\State {$\mathbf{P}_5 = \Call{strassen}{\mathbf{A}_{00} + \mathbf{A}_{01},  \mathbf{B}_{11}, \frac{n}{2}$}}
+	\State {$\mathbf{P}_6 = \Call{strassen}{\mathbf{A}_{10} - \mathbf{A}_{00},  \mathbf{B}_{00} + \mathbf{B}_{01}, \frac{n}{2}$}}
+	\State {$\mathbf{P}_7 = \Call{strassen}{\mathbf{A}_{01} - \mathbf{A}_{11},  \mathbf{B}_{10} + \mathbf{B}_{11}, \frac{n}{2}$}}
+	\State {$\mathbf{C}_{00} = \mathbf{P}_1 + \mathbf{P}_4 - \mathbf{P}_5 + \mathbf{P}_7$}
+	\State {$\mathbf{C}_{01} = \mathbf{P}_3 + \mathbf{P}_5$}
+	\State {$\mathbf{C}_{10} = \mathbf{P}_2 + \mathbf{P}_4$}
+	\State {$\mathbf{C}_{11} = \mathbf{P}_1 - \mathbf{P}_2 + \mathbf{P}_3 + \mathbf{P}_6$}
+	\State \Return {$\mathbf{C}$}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+\end{minipage}%
+    }
+  \end{center}
+\end{frame}
+
+\subsection{z-ordering}
+
+\begin{frame}{z-ordering}
+	\vspace{0.5cm}
+	\begin{figure}[htbp]
+\centerline{\includegraphics[scale=.16]{z_ordering.pdf}}
+\centerline{\includegraphics[scale=.2775]{mem_ordering.pdf}}
+\end{figure}
+\end{frame}
+
+\begin{frame}{z-ordering}
+\begin{itemize}
+		\item
+		Matrices at cutoff level are stored row-wise
+		\vspace{0.25cm}
+			\begin{figure}[htbp]
+				\centerline{\includegraphics[scale=.5]{partly_z_ordering.pdf}}
+			\end{figure}
+		\item
+		
+		\end{itemize}
+\end{frame}
+
 
 \section{Experiments}
 
