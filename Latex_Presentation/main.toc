@@ -1,6 +1,10 @@
 \babel@toc {UKenglish}{}
 \beamer@sectionintoc {1}{Introduction}{2}{0}{1}
 \beamer@sectionintoc {2}{Strassen's Algorithm}{4}{0}{2}
-\beamer@subsectionintoc {2}{1}{z-ordering}{6}{0}{2}
-\beamer@sectionintoc {3}{Experiments}{8}{0}{3}
-\beamer@sectionintoc {4}{Conclusion}{9}{0}{4}
+\beamer@subsectionintoc {2}{1}{Z-ordering}{6}{0}{2}
+\beamer@sectionintoc {3}{Parallelization}{8}{0}{3}
+\beamer@subsectionintoc {3}{1}{Parallel matrix multiplication}{8}{0}{3}
+\beamer@subsectionintoc {3}{2}{Parallel Strassen (2 layers)}{9}{0}{3}
+\beamer@subsectionintoc {3}{3}{Parallel Strassen (recursive)}{10}{0}{3}
+\beamer@sectionintoc {4}{Experiments}{11}{0}{4}
+\beamer@sectionintoc {5}{Conclusion}{12}{0}{5}
