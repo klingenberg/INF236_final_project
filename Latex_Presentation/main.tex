@@ -15,12 +15,26 @@
 \setlength{\TPVertModule}{\paperheight} % Textpos units
 \usepackage{tikz}
 \usetikzlibrary{overlay-beamer-styles}  % Overlay effects for TikZ
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{pgfplots}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage[backend=biber]{biblatex}
+\usepackage{caption}
+\usepackage{subcaption}
 
 
 \author{Kate\v{r}ina \v{C}\'{i}\v{z}kov\'{a}, Luca Klingenberg}
 \title{Parallel Matrix Multiplication}
 \subtitle{Final Project\\ INF236: Parallel Programming}
 
+
+\definecolor{gradient1}{HTML}{833ab4}
+\definecolor{gradient2}{HTML}{fd1d1d}
+\definecolor{gradient3}{HTML}{fc8a3b}
+\definecolor{gradient4}{HTML}{fcb045}
+\definecolor{gradient0}{HTML}{005ab3}
 
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
@@ -108,6 +122,8 @@
     $\mathcal{O}(n^{\log_2{7}}) \approx \mathcal{O}(n^{2.8073})$
     \item
     Can be further improved by reusing intermediate results of additions and subtractions (Winograd's algorithm)
+    \item
+  	Input matrices are zero-padded until the next power of two
     \end{itemize}
 \end{frame}
 
@@ -145,6 +161,44 @@
 \end{minipage}%
     }
   \end{center}
+\end{frame}
+
+\subsection{Different values for the cutoff level}
+
+
+\begin{frame}{Different values for the cutoff level}
+\begin{figure}[h!]
+\center
+\begin{tikzpicture}
+\begin{axis}[
+    xlabel={submatrix dimension at cuttoff},
+    ylabel={speedup},
+    xmin=0, xmax=512,
+    ymin=0, ymax=4,
+    xtick={1, 2, 4, 8, 16, 32, 64, 128, 256, 512},
+    xticklabels={1, 2, 4, 8, 16, 32, 64, 128, 256},
+    ytick={0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4},
+	xmode=log,
+    log basis x={2},
+    legend pos=outer north east,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+
+	% running time of normal sequential: 22.729855
+	\addplot[color=gradient1, mark=*, only marks] table [x=cutoff, y=size1, col sep=comma] {cutoffs.csv};
+	% running time of normal sequential: 1.397876
+	\addplot[color=gradient2, mark=*, only marks] table [x=cutoff, y=size2, col sep=comma] {cutoffs.csv};
+	% running time of normal sequential: 0.177942
+	\addplot[color=gradient3, mark=*, only marks] table [x=cutoff, y=size3, col sep=comma] {cutoffs.csv};
+	% running time of normal sequential: 0.032513
+	\addplot[color=gradient4, mark=*, only marks] table [x=cutoff, y=size4, col sep=comma] {cutoffs.csv};
+
+    \legend{2048$\times$2048, 1024$\times$1024, 512$\times$512, 256$\times$256}
+\end{axis}
+\end{tikzpicture}
+\end{figure}
 \end{frame}
 
 \subsection{Z-ordering}
@@ -202,26 +256,34 @@
 \end{frame}
 
 
-\subsection{Parallel Strassen (2 layers)}
+\subsection{Parallel Strassen}
 
-\begin{frame}{Parallelization: Strassen (2 layers)}
+\begin{frame}{Parallelization: Strassen}
 \begin{itemize}
+	\item
+	2-layers variant
+	\begin{itemize}
 		\item
 			Use 2 hardcoded recursion levels of Strassen
 		\item
 			Execute all additions and subtractions in parallel
 		\item 
+			At the cutoff level, execute all matrix multiplications in parallel	
+	\end{itemize}
+	\vspace{1cm}
+	\item
+	Recursive variant
+	\begin{itemize}
+		\item
+			Use several recursive calls of Strassen
+		\item
+			Execute all additions and subtractions in parallel
+		\item 
 			At the cutoff level, execute all matrix multiplications in parallel
-		
+		\item 
+			Strassen is recursively applied until the submatrices have a dimension of 512$\times$512	
+	\end{itemize}
 \end{itemize}
-	
-\end{frame}
-
-
-\subsection{Parallel Strassen (recursive)}
-
-\begin{frame}{Parallelization: Strassen (recursive)}
-	
 \end{frame}
 
 
@@ -229,8 +291,133 @@
 \section{Experiments}
 
 \begin{frame}{Experiments}
+	\vspace{.2cm}
+	\centering
+	\begin{tikzpicture}
+\begin{axis}[
+	title=Comparing Strassen algorithm variants (256$\times$256),
+    xlabel={\#threads},
+    ylabel={speedup},
+    xmin=0, xmax=8,
+    ymin=0, ymax=26,
+    xtick={0, 1, 2, 3, 4, 5, 6, 7},
+    xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
+    ytick={0, 5, 10, 15, 20, 25},
+    legend pos=north west,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+	
+	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result256.csv};
+	
+	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result256.csv};
+	
+	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result256.csv};
+    
+    \legend{parallel matmul, parallel 2 layers Strassen, parallel recursive Strassen}
 
+\end{axis}
+\end{tikzpicture}
 \end{frame}
+
+\begin{frame}{Experiments}
+	\vspace{.2cm}
+	\centering
+	\begin{tikzpicture}
+\begin{axis}[
+	title=Comparing Strassen algorithm variants (4096$\times$4096),
+    xlabel={\#threads},
+    ylabel={speedup},
+    xmin=0, xmax=8,
+    ymin=0, ymax=26,
+    xtick={0, 1, 2, 3, 4, 5, 6, 7},
+    xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
+    ytick={0, 5, 10, 15, 20, 25},
+    legend pos=north west,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+	
+	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result4096.csv};
+	
+	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result4096.csv};
+	
+	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result4096.csv};
+    
+    \legend{parallel matmul, parallel 2 layers Strassen, parallel recursive Strassen}
+
+\end{axis}
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Experiments}
+	\vspace{.2cm}
+	\centering
+	\begin{tikzpicture}
+\begin{axis}[
+	title=Comparing Strassen algorithm variants (8192$\times$8192),
+    xlabel={\#threads},
+    ylabel={speedup},
+    xmin=0, xmax=8,
+    ymin=0, ymax=26,
+    xtick={0, 1, 2, 3, 4, 5, 6, 7},
+    xticklabels={0, 1, 2, 5, 10, 20, 40, 60},
+    ytick={0, 5, 10, 15, 20, 25},
+    legend pos=north west,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+	
+	\addplot[color=gradient1, mark=*, only marks] table [x=config, y=strassen_vs_simple_parallel, col sep=comma] {result8192.csv};
+	
+	\addplot[color=gradient2, mark=*, only marks] table [x=config, y=strassen_vs_strassen_2layers, col sep=comma] {result8192.csv};
+	
+	\addplot[color=gradient4, mark=*, only marks] table [x=config, y=strassen_vs_strassen_recursive, col sep=comma] {result8192.csv};
+    
+    \legend{parallel matmul, parallel 2 layers Strassen, parallel recursive Strassen}
+
+\end{axis}
+\end{tikzpicture}
+\end{frame}
+
+
+\begin{frame}{Experiments}
+	\vspace{.2cm}
+    \scalebox{0.85}{
+    \begin{minipage}{0.7\linewidth}
+\begin{tikzpicture}
+\begin{semilogyaxis}[
+	title=Running time for matrices of different sizes,
+    xlabel={matrix size},
+    ylabel={running time in seconds},
+    ymin=0, ymax=400,
+    legend pos=outer north east,
+    %legend style={at={(0.5,-0.2)},anchor=north},
+    xmajorgrids=true,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+
+    \addplot[color=gradient0, mark=*, only marks] table [x=size, y=simple, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient1, mark=*, only marks] table [x=size, y=strassen, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient2, mark=*, only marks] table [x=size, y=simple_parallel, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient3, mark=*, only marks] table [x=size, y=strassen_2layers, col sep=comma] {results_diff_size.csv};
+	
+	\addplot[color=gradient4, mark=*, only marks] table [x=size, y=strassen_recursive, col sep=comma] {results_diff_size.csv};
+    
+    \legend{matmul, Strassen, parallel matmul, parallel 2 layers Strassen, parallel recursive Strassen }
+\end{semilogyaxis}
+\end{tikzpicture}
+\end{minipage}%
+    }
+\end{frame}
+
 
 \section{Conclusion}
 
