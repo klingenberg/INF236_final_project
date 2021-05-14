@@ -5,16 +5,20 @@
 \defcounter {refsection}{0}\relax 
 \beamer@sectionintoc {2}{Strassen's Algorithm}{4}{0}{2}
 \defcounter {refsection}{0}\relax 
-\beamer@subsectionintoc {2}{1}{Different values for the cutoff level}{6}{0}{2}
+\beamer@subsectionintoc {2}{1}{Different values for the cutoff level}{7}{0}{2}
 \defcounter {refsection}{0}\relax 
-\beamer@subsectionintoc {2}{2}{Z-ordering}{7}{0}{2}
+\beamer@subsectionintoc {2}{2}{Z-ordering}{8}{0}{2}
 \defcounter {refsection}{0}\relax 
-\beamer@sectionintoc {3}{Parallelization}{9}{0}{3}
+\beamer@sectionintoc {3}{Parallelization}{10}{0}{3}
 \defcounter {refsection}{0}\relax 
-\beamer@subsectionintoc {3}{1}{Parallel matrix multiplication}{9}{0}{3}
+\beamer@subsectionintoc {3}{1}{Parallel matrix multiplication}{11}{0}{3}
 \defcounter {refsection}{0}\relax 
-\beamer@subsectionintoc {3}{2}{Parallel Strassen}{10}{0}{3}
+\beamer@subsectionintoc {3}{2}{Parallel Strassen}{12}{0}{3}
 \defcounter {refsection}{0}\relax 
-\beamer@sectionintoc {4}{Experiments}{11}{0}{4}
+\beamer@sectionintoc {4}{Experiments}{13}{0}{4}
 \defcounter {refsection}{0}\relax 
-\beamer@sectionintoc {5}{Conclusion}{15}{0}{5}
+\beamer@subsectionintoc {4}{1}{Comparing Strassen algorithm variants}{14}{0}{4}
+\defcounter {refsection}{0}\relax 
+\beamer@subsectionintoc {4}{2}{Matrices of different sizes}{17}{0}{4}
+\defcounter {refsection}{0}\relax 
+\beamer@sectionintoc {5}{Conclusion}{18}{0}{5}
